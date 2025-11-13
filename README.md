@@ -53,7 +53,7 @@ Over het algemeen is het beter om één coreclass per bestand te gebruiken.
 ## Licensie
 MIT License
 
-Copyright (c) 2025 Bo Külman
+Copyright (c) 2025 Abdi Abdulqadir, Bo Külman, Hazal Kalender, Michael van der Rhee, Rayen Khelifi
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
