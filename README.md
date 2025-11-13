@@ -24,9 +24,7 @@ Als alle features voor een sprint af zijn gerond kan de code van develop naar ma
 
 ## Code Conventies
 
-|
-
-##Code:
+## Code
 
 namen van classes, methods, enumerations, public fields, public properties, namespaces: PascalCase.
 
@@ -40,7 +38,7 @@ namen van interfaces starten met I, bijv. IInterface.
 
 comments en variabelen in het nederlands declareren
 
-##Files:
+## Files
 
 Bestandsnamen en directorynamen zijn PascalCase, bijvoorbeeld MyFile.cs.
 
