@@ -4,7 +4,7 @@ Codeconventies
 
 Code
 
-
+|
 namen van classes, methods, enumerations, public fields, public properties, namespaces: PascalCase.
 
 namen van local variables, parameters: camelCase.
@@ -19,7 +19,7 @@ namen van interfaces starten met I, bijv. IInterface.
 
 files
 
-
+|
 Bestandsnamen en directorynamen zijn PascalCase, bijvoorbeeld MyFile.cs.
 
 Waar mogelijk moet de bestandsnaam gelijk zijn aan de naam van de hoofdklasse in het bestand, bijvoorbeeld MyClass.cs.
