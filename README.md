@@ -16,7 +16,7 @@ Wat betreft hoofdlettergebruik is een "woord" alles wat geschreven is zonder int
 
 namen van interfaces starten met I, bijv. IInterface.
 
-
+comments en variabelen in het nederlands declareren
 
 files
 
