@@ -24,6 +24,8 @@ Als alle features voor een sprint af zijn gerond kan de code van develop naar ma
 
 ## Code Conventies
 
+|
+
 ##Code:
 
 namen van classes, methods, enumerations, public fields, public properties, namespaces: PascalCase.
