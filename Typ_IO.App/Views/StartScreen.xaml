@@ -1,0 +1,46 @@
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BasisJaar2.Views.StartScreen">
+    <!-- Make the stack layout fill parent and center its content -->
+    <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="20">
+        <Border
+            StrokeThickness="0"
+            Background="#061f4f"
+            StrokeShape="RoundRectangle 20"
+            HorizontalOptions="Center">
+            <HorizontalStackLayout Spacing="6" Padding="10,5">
+                <Image
+                   Source="play.png"
+                   HeightRequest="32"
+                   WidthRequest="32"
+                   VerticalOptions="Center" />
+                <Label
+                   Text="Play"
+                   TextColor="White"
+                   VerticalOptions="Center"
+                   Padding="10,5"
+                   FontSize="24" />
+            </HorizontalStackLayout>
+        </Border>
+
+        <Border
+            StrokeThickness="0"
+            Background="#061f4f"
+            StrokeShape="RoundRectangle 20"
+            HorizontalOptions="Center">
+            <HorizontalStackLayout Spacing="6" Padding="10,5">
+                <Image
+                   Source="exit.png"
+                   HeightRequest="32"
+                   WidthRequest="32"
+                   VerticalOptions="Center" />
+                <Label
+                   Text="Exit"
+                   TextColor="White"
+                   VerticalOptions="Center"
+                   Padding="10,5"
+                   FontSize="24" />
+            </HorizontalStackLayout>
+        </Border>
+    </VerticalStackLayout>
+</ContentView>
