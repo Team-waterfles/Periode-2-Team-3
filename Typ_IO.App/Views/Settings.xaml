@@ -1,0 +1,42 @@
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:BasisJaar2.ViewModels"
+             x:Class="BasisJaar2.Views.Settings"
+             x:DataType="vm:SettingsViewModel">
+
+    <StackLayout>
+
+        <!-- Tab buttons -->
+        <Grid ColumnSpacing="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0"
+                    Text="Main"
+                    BackgroundColor="{Binding MainTabBackground}"
+                    TextColor="{Binding MainTabTextColor}"
+                    Command="{Binding SelectMainTabCommand}" />
+
+            <Button Grid.Column="1"
+                    Text="Audio"
+                    BackgroundColor="{Binding AudioTabBackground}"
+                    TextColor="{Binding AudioTabTextColor}"
+                    Command="{Binding SelectAudioTabCommand}" />
+
+            <Button Grid.Column="2"
+                    Text="Video"
+                    BackgroundColor="{Binding VideoTabBackground}"
+                    TextColor="{Binding VideoTabTextColor}"
+                    Command="{Binding SelectVideoTabCommand}" />
+        </Grid>
+
+        <!-- Content area -->
+        <Label Text="{Binding ActiveTabContent}"
+               VerticalOptions="Center"
+               HorizontalOptions="Center"
+               FontSize="Medium" />
+    </StackLayout>
+</ContentView>

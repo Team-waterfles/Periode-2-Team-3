@@ -4,7 +4,8 @@
              x:Class="BasisJaar2.Views.Header">
     <VerticalStackLayout>
         <Label 
-            Text="Header"
+            Text="Typ.IO"
+            FontSize="36"
             VerticalOptions="Center" 
             HorizontalOptions="Center" />
     </VerticalStackLayout>
