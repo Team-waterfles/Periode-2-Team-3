@@ -2,10 +2,108 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="BasisJaar2.Views.Page1">
-    <VerticalStackLayout>
-        <Label 
-            Text="Pagina1"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+            <Label Text="Typ Oefening" 
+                   FontSize="32" 
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center" />
+
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="30">
+                <Label Text=" Tijd:" FontSize="18" FontAttributes="Bold" />
+                <Label x:Name="tijdLabel" 
+                       Text="00:00" 
+                       FontSize="24" 
+                       FontAttributes="Bold"
+                       TextColor="Green" />
+
+                <Label Text="Getypt:" FontSize="18" FontAttributes="Bold" />
+                <Label x:Name="aantalKaraktersLabel" 
+                       Text="0" 
+                       FontSize="24" 
+                       FontAttributes="Bold"
+                       TextColor="Blue" />
+            </HorizontalStackLayout>
+
+            <Frame BorderColor="Black" 
+                   CornerRadius="10" 
+                   Padding="15"
+                   BackgroundColor="Black">
+                <VerticalStackLayout>
+                    <Label Text="Typ de onderstaande tekst over:" 
+                           FontSize="16" 
+                           FontAttributes="Bold" 
+                           Margin="0,0,0,10" />
+
+                    <Label x:Name="voorbeeldTekstLabel"
+                           Text="De snelle bruine vos springt over de luie hond. Dit is een eenvoudige oefening om je typvaardigheid te verbeteren."
+                           FontSize="18"
+                           FontFamily="CourierNew"
+                           LineBreakMode="WordWrap" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <Frame BorderColor="DarkGray" 
+                   CornerRadius="10" 
+                   Padding="5"
+                   BackgroundColor="White">
+                <Editor x:Name="invoerVeld"
+                        Placeholder="Begin hier te typen..."
+                        FontSize="18"
+                        FontFamily="CourierNew"
+                        HeightRequest="200"
+                        TextChanged="OnTekstGewijzigd"
+                        IsEnabled="False" />
+            </Frame>
+
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="20">
+                <Button x:Name="startKnop"
+                        Text="▶ Start"
+                        Clicked="OnStartGeklikt"
+                        BackgroundColor="Green"
+                        TextColor="White"
+                        FontSize="18"
+                        WidthRequest="120"
+                        HeightRequest="50" />
+
+                <Button x:Name="stopKnop"
+                        Text="⏹ Stop"
+                        Clicked="OnStopGeklikt"
+                        BackgroundColor="Red"
+                        TextColor="White"
+                        FontSize="18"
+                        WidthRequest="120"
+                        HeightRequest="50"
+                        IsEnabled="False" />
+            </HorizontalStackLayout>
+
+            <Frame x:Name="resultaatFrame"
+                   IsVisible="False"
+                   BorderColor="Green"
+                   CornerRadius="10"
+                   Padding="20"
+                   BackgroundColor="LightGreen">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text=" Oefening Voltooid!" 
+                           FontSize="24" 
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center" />
+
+                    <Label x:Name="resultaatTekstLabel"
+                           FontSize="16"
+                           HorizontalOptions="Center" />
+
+                    <Button Text="Opnieuw"
+                            Clicked="OnOpnieuwGeklikt"
+                            BackgroundColor="Orange"
+                            TextColor="White"
+                            HorizontalOptions="Center"
+                            Margin="0,10,0,0" />
+                </VerticalStackLayout>
+            </Frame>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
 </ContentView>
