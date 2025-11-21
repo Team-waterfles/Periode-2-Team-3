@@ -24,9 +24,9 @@ namespace BasisJaar2.ViewModels
         private void OnMakkelijk()
         {
             // hier kan je later code toevoegen voor het makkelijke niveau
-            if (Application.Current?.MainPage != null)
+            if (MainPageViewModel.Current != null)
             {
-                Application.Current.MainPage.DisplayAlert("Moeilijkheidsgraad", "Je hebt Makkelijk gekozen!", "OK");
+                MainPageViewModel.Current.SubpageContent = new Views.Oefening();
             }
         }
 
