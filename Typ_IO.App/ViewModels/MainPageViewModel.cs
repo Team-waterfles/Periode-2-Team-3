@@ -5,8 +5,11 @@ namespace BasisJaar2.ViewModels
 {
     public class MainPageViewModel : BindableObject
     {
-        private ContentView _subpageContent;
-        public ContentView SubpageContent
+        // dit is nieuw! Een static property zodat we overal bij kunnen
+        public static MainPageViewModel? Current { get; private set; }
+
+        private ContentView? _subpageContent;
+        public ContentView? SubpageContent
         {
             get => _subpageContent;
             set
@@ -19,15 +22,15 @@ namespace BasisJaar2.ViewModels
 
         private bool _isInSettings => SubpageContent is Views.Settings;
 
-        private string _toolbarIcon;
-        public string ToolbarIcon
+        private string? _toolbarIcon;
+        public string? ToolbarIcon
         {
             get => _toolbarIcon;
             set { _toolbarIcon = value; OnPropertyChanged(); }
         }
 
-        private string _toolbarText;
-        public string ToolbarText
+        private string? _toolbarText;
+        public string? ToolbarText
         {
             get => _toolbarText;
             set { _toolbarText = value; OnPropertyChanged(); }
@@ -37,6 +40,9 @@ namespace BasisJaar2.ViewModels
 
         public MainPageViewModel()
         {
+            // zet de Current property zodat andere classes er bij kunnen
+            Current = this;
+
             SubpageContent = new Views.StartScreen();
             ToolbarCommand = new Command(OnToolbarClicked);
             UpdateToolbarProperties();

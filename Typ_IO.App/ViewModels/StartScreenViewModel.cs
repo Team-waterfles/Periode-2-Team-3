@@ -17,13 +17,19 @@ namespace BasisJaar2.ViewModels
 
         private void OnPlay()
         {
-            // TODO: Add your play logic here
-            Application.Current.MainPage.DisplayAlert("Play", "Play button clicked!", "OK");
+            // gebruik de static Current property
+            if (MainPageViewModel.Current != null)
+            {
+                MainPageViewModel.Current.SubpageContent = new Views.MoeilijkheidsgraadPage();
+            }
+            else
+            {
+                Application.Current?.MainPage?.DisplayAlert("Error", "MainPageViewModel not found", "OK");
+            }
         }
 
         private void OnExit()
         {
-            // Exit the application
             System.Environment.Exit(0);
         }
     }
