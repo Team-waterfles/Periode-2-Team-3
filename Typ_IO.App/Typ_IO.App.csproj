@@ -63,6 +63,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Views\LevelsPage.xaml.cs">
+	    <DependentUpon>LevelsPage.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\Oefening.xaml.cs">
+	    <DependentUpon>Oefening.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\PracticePage.xaml.cs">
+	    <DependentUpon>PracticePage.cs</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\StartScreen.xaml.cs">
 	    <DependentUpon>StartScreen.xaml</DependentUpon>
 	  </Compile>
@@ -78,7 +87,19 @@
 	  <MauiXaml Update="Views\Header.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\LevelsPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\MoeilijkheidsgraadPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\MyMainPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Oefening.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\PracticePage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\Settings.xaml">

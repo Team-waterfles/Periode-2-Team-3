@@ -1,11 +1,13 @@
-<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+﻿<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:BasisJaar2.ViewModels"
              x:Class="BasisJaar2.Views.StartScreen"
              x:DataType="vm:StartScreenViewModel">
 
     <!-- Stack layout with spacing between buttons -->
-    <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="20">
+    <VerticalStackLayout VerticalOptions="Center"
+                         HorizontalOptions="Center"
+                         Spacing="20">
 
         <!-- Play Button -->
         <Border StrokeThickness="0"
@@ -13,11 +15,40 @@
                 StrokeShape="RoundRectangle 20"
                 HorizontalOptions="Center">
             <HorizontalStackLayout Spacing="6" Padding="10,5">
-                <Image Source="play.png" HeightRequest="32" WidthRequest="32" VerticalOptions="Center" />
-                <Label Text="Play" TextColor="White" FontSize="24" VerticalOptions="Center" Padding="10,5"/>
+                <Image Source="play.png"
+                       HeightRequest="32"
+                       WidthRequest="32"
+                       VerticalOptions="Center" />
+                <Label Text="Play"
+                       TextColor="White"
+                       FontSize="24"
+                       VerticalOptions="Center"
+                       Padding="10,5" />
             </HorizontalStackLayout>
             <Border.GestureRecognizers>
                 <TapGestureRecognizer Command="{Binding PlayCommand}" />
+            </Border.GestureRecognizers>
+        </Border>
+
+        <!--  Practice Button -->
+        <Border StrokeThickness="0"
+                Background="#061f4f"
+                StrokeShape="RoundRectangle 20"
+                HorizontalOptions="Center">
+            <HorizontalStackLayout Spacing="6" Padding="10,5">
+              
+                <Image Source="play.png"
+                       HeightRequest="32"
+                       WidthRequest="32"
+                       VerticalOptions="Center" />
+                <Label Text="Practice"
+                       TextColor="White"
+                       FontSize="24"
+                       VerticalOptions="Center"
+                       Padding="10,5" />
+            </HorizontalStackLayout>
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding PracticeCommand}" />
             </Border.GestureRecognizers>
         </Border>
 
@@ -27,8 +58,15 @@
                 StrokeShape="RoundRectangle 20"
                 HorizontalOptions="Center">
             <HorizontalStackLayout Spacing="6" Padding="10,5">
-                <Image Source="exit.png" HeightRequest="32" WidthRequest="32" VerticalOptions="Center" />
-                <Label Text="Exit" TextColor="White" FontSize="24" VerticalOptions="Center" Padding="10,5"/>
+                <Image Source="exit.png"
+                       HeightRequest="32"
+                       WidthRequest="32"
+                       VerticalOptions="Center" />
+                <Label Text="Exit"
+                       TextColor="White"
+                       FontSize="24"
+                       VerticalOptions="Center"
+                       Padding="10,5" />
             </HorizontalStackLayout>
             <Border.GestureRecognizers>
                 <TapGestureRecognizer Command="{Binding ExitCommand}" />
