@@ -5,7 +5,7 @@ namespace BasisJaar2.ViewModels
 {
     public class MainPageViewModel : BindableObject
     {
-        // static reference zodat andere viewmodels kunnen navigeren
+        // Globale referentie zodat andere viewmodels kunnen navigeren
         public static MainPageViewModel? Current { get; private set; }
 
         private ContentView? _subpageContent;
@@ -19,6 +19,9 @@ namespace BasisJaar2.ViewModels
                 UpdateToolbarProperties();
             }
         }
+
+        // Hulpproperty: zijn we in de Settings-pagina?
+        private bool IsInSettings => SubpageContent is Views.Settings;
 
         private string? _toolbarIcon;
         public string? ToolbarIcon
@@ -36,14 +39,12 @@ namespace BasisJaar2.ViewModels
 
         public ICommand ToolbarCommand { get; }
 
-        private bool IsInSettings => SubpageContent is Views.Settings;
-
         public MainPageViewModel()
         {
-            // globale referentie voor navigatie
+            // static instance zetten
             Current = this;
 
-            // start op het startscherm
+            // Startscherm als eerste pagina
             SubpageContent = new Views.StartScreen();
 
             ToolbarCommand = new Command(OnToolbarClicked);
@@ -62,12 +63,14 @@ namespace BasisJaar2.ViewModels
         {
             if (IsInSettings)
             {
-                ToolbarIcon = null;  // tekstknop "Exit"
-                ToolbarText = "Exit";
+                // In settings: toon "Exit" (terug-knop)
+                ToolbarIcon = null;   // geen icoon
+                ToolbarText = "Exit"; // tekstknop
             }
             else
             {
-                ToolbarIcon = "settings.png"; // icoon tonen
+                // Normaal: toon settings-icoon zonder tekst
+                ToolbarIcon = "settings.png";
                 ToolbarText = null;
             }
         }

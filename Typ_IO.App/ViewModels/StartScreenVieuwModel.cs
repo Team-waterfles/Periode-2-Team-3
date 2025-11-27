@@ -19,7 +19,6 @@ namespace BasisJaar2.ViewModels
 
         private void OnPlay()
         {
-            // Voor nu hetzelfde als Practice: ga naar LevelsPage
             if (MainPageViewModel.Current != null)
             {
                 MainPageViewModel.Current.SubpageContent =
@@ -36,7 +35,6 @@ namespace BasisJaar2.ViewModels
 
         private void OnPractice()
         {
-            // Practice mode -> ook naar LevelsPage
             if (MainPageViewModel.Current != null)
             {
                 MainPageViewModel.Current.SubpageContent =
