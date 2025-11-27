@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Typ_IO.Core.Data
 {
-    public class MySqlSchemaMigrator
+    public class MySqlSchemaMigrator : IMySqlSchemaMigrator
     {
         private readonly MySqlConnectionFactory _factory;
         public MySqlSchemaMigrator(MySqlConnectionFactory factory) => _factory = factory;

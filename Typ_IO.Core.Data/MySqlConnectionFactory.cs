@@ -15,10 +15,10 @@ namespace Typ_IO.Core.Data
         {
             MySqlConnection _connectionString = new MySqlConnection(
                 "server=localhost;" +
-                "user=???;" +
-                "database=???;" +
+                "user=speler;" +
+                "database=typio;" +
                 "port=3306;" +
-                "password=???");
+                "password=typio");
         }
         public async Task<MySqlConnection> CreateOpenConnectionAsync()
         {

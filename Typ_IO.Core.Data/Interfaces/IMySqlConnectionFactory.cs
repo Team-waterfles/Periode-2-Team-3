@@ -1,7 +1,10 @@
 ﻿using System;
 using MySqlConnector;
 using System.Data;
-public interface IMySqlConnectionFactory
+namespace Typ_IO.Core.Data
 {
-    Task<MySqlConnection> CreateOpenConnectionAsync();
+    public interface IMySqlConnectionFactory
+    {
+        Task<MySqlConnection> CreateOpenConnectionAsync();
+    }
 }
