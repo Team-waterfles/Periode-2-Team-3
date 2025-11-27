@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using BasisJaar2.Helpers;
+using Typ_IO.Core.Data;
+using BasisJaar2.Views;
+using BasisJaar2.ViewModels;
+using Microsoft.Extensions.Logging;
 
 namespace BasisJaar2
 {
@@ -16,8 +20,8 @@ namespace BasisJaar2
                 });
 
             // DI-registraties
-            builder.Services.AddSingleton<ISqliteConnectionFactory>(_ => new SqliteConnectionFactory(dbPath));
-            builder.Services.AddSingleton<SqliteSchemaMigrator>();
+            builder.Services.AddSingleton<IMySqlConnectionFactory>(_ => new MySqlConnectionFactory());
+            builder.Services.AddSingleton<MySqlSchemaMigrator>();
 
 #if DEBUG
             builder.Logging.AddDebug();
@@ -31,8 +35,8 @@ namespace BasisJaar2
 
             var task = migrator.MigrateAsync();
             task.GetAwaiter().GetResult();
-            task = SeedAsync(scope.ServiceProvider);
-            task.GetAwaiter().GetResult();
+            //task = SeedAsync(scope.ServiceProvider);
+            //task.GetAwaiter().GetResult();
 
             ServiceHelper.Initialize(app.Services);
 
