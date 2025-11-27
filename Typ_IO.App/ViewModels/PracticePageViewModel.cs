@@ -7,25 +7,44 @@ namespace BasisJaar2.ViewModels
 {
     public class PracticePageViewModel : BindableObject
     {
-        private string _levelNaam = "";
-        public string LevelNaam
-        {
-            get => _levelNaam;
-            set { _levelNaam = value; OnPropertyChanged(); }
-        }
-
-        private string _oefentekst = "";
-        public string Oefentekst
-        {
-            get => _oefentekst;
-            set { _oefentekst = value; OnPropertyChanged(); }
-        }
+        public string LevelNaam { get; set; }
+        public string Oefentekst { get; set; }
 
         private string _userText = "";
         public string UserText
         {
             get => _userText;
-            set { _userText = value; OnPropertyChanged(); }
+            set
+            {
+                if (_userText == value) return;
+                _userText = value;
+                OnPropertyChanged();
+
+                // timer starten bij eerste toetsaanslag
+                if (_gestart && !_timerGestart && !string.IsNullOrEmpty(_userText))
+                {
+                    _timerGestart = true;
+                    _startTijd = DateTime.Now;
+                }
+
+                // timer stoppen als lengte oefentekst is bereikt of overschreden
+                if (_gestart && _timerGestart && !_timerGestopt &&
+                    _userText.Length >= Oefentekst.Length)
+                {
+                    _timerGestopt = true;
+                    _eindTijd = DateTime.Now;
+                }
+
+                // keyboard assist bijwerken
+                UpdateKeyboardAssist();
+            }
+        }
+
+        private string _tijdTekst = "";
+        public string TijdTekst
+        {
+            get => _tijdTekst;
+            set { _tijdTekst = value; OnPropertyChanged(); }
         }
 
         private string _resultaatTekst = "";
@@ -35,94 +54,235 @@ namespace BasisJaar2.ViewModels
             set { _resultaatTekst = value; OnPropertyChanged(); }
         }
 
+        private string _wpmTekst = "";
+        public string WpmTekst
+        {
+            get => _wpmTekst;
+            set { _wpmTekst = value; OnPropertyChanged(); }
+        }
+
+        public bool KanStarten { get; set; } = true;
+        public bool KanKlaar { get; set; } = false;
+
+        private bool _kanTypen = false;
+        public bool KanTypen
+        {
+            get => _kanTypen;
+            set { _kanTypen = value; OnPropertyChanged(); }
+        }
+
+        // 👇 Keyboard assist properties
+        private string _huidigeToets = "";
+        public string HuidigeToets
+        {
+            get => _huidigeToets;
+            set { _huidigeToets = value; OnPropertyChanged(); }
+        }
+
+        private string _huidigeVinger = "";
+        public string HuidigeVinger
+        {
+            get => _huidigeVinger;
+            set { _huidigeVinger = value; OnPropertyChanged(); }
+        }
+
         public ICommand StartCommand { get; }
         public ICommand KlaarCommand { get; }
 
         private bool _gestart;
+        private bool _timerGestart;
+        private bool _timerGestopt;
         private DateTime _startTijd;
+        private DateTime _eindTijd;
 
         public PracticePageViewModel()
         {
             var level = PracticeSession.GeselecteerdLevel;
-            if (level != null)
-            {
-                LevelNaam = level.Naam;
-                Oefentekst = level.Oefentekst;
-            }
-            else
-            {
-                LevelNaam = "Geen level gekozen";
-                Oefentekst = "Ga terug en kies eerst een level.";
-            }
-
-            UserText = string.Empty;
-            ResultaatTekst = string.Empty;
+            LevelNaam = level?.Naam ?? "Geen level gekozen";
+            Oefentekst = level?.Oefentekst ?? "";
 
             StartCommand = new Command(OnStart);
             KlaarCommand = new Command(OnKlaar);
+
+            KanTypen = false;
+
+            // eerste toets-hint tonen
+            UpdateKeyboardAssist();
         }
 
         private void OnStart()
         {
             _gestart = true;
-            _startTijd = DateTime.Now;
+            _timerGestart = false;
+            _timerGestopt = false;
+            _startTijd = DateTime.MinValue;
+            _eindTijd = DateTime.MinValue;
+
             UserText = string.Empty;
-            ResultaatTekst = string.Empty;
-            OnPropertyChanged(nameof(UserText));
-            OnPropertyChanged(nameof(ResultaatTekst));
+            TijdTekst = "";
+            WpmTekst = "";
+            ResultaatTekst = "";
+
+            KanStarten = false;
+            KanKlaar = true;
+            KanTypen = true;
+
+            OnPropertyChanged(nameof(KanStarten));
+            OnPropertyChanged(nameof(KanKlaar));
+            OnPropertyChanged(nameof(KanTypen));
+
+            UpdateKeyboardAssist();
         }
 
         private async void OnKlaar()
         {
             if (!_gestart)
+            {
+                await Application.Current.MainPage.DisplayAlert(
+                    "Let op",
+                    "Druk eerst op Start voordat je klaar bent.",
+                    "OK");
                 return;
+            }
+
+            if (_timerGestart && !_timerGestopt)
+            {
+                _eindTijd = DateTime.Now;
+                _timerGestopt = true;
+            }
 
             _gestart = false;
-            var duur = DateTime.Now - _startTijd;
+            KanStarten = true;
+            KanKlaar = false;
+            KanTypen = false;
 
-            // fouten berekenen
+            OnPropertyChanged(nameof(KanStarten));
+            OnPropertyChanged(nameof(KanKlaar));
+            OnPropertyChanged(nameof(KanTypen));
+
+            var duur = (_timerGestart && _eindTijd != DateTime.MinValue)
+                ? _eindTijd - _startTijd
+                : TimeSpan.Zero;
+
             BerekenFouten(out int fouten, out double nauwkeurigheid);
 
-            // tekst voor onderin het scherm
-            ResultaatTekst = $"Fouten: {fouten}  •  Nauwkeurigheid: {nauwkeurigheid:P0}";
-            OnPropertyChanged(nameof(ResultaatTekst));
+            int woorden = TelWoorden(UserText);
+            double minuten = duur.TotalMinutes;
+            double wpm = (minuten > 0) ? woorden / minuten : 0;
 
-            // popup met tijd + fouten
+            TijdTekst = $"Tijd: {duur.TotalSeconds:F1} sec";
+            WpmTekst = $"Snelheid: {wpm:F0} WPM";
+            ResultaatTekst = $"Fouten: {fouten} • Nauwkeurigheid: {nauwkeurigheid:P0}";
+
+            // 🔓 LEVEL UNLOCK LOGICA
+            bool levelGehaald = false;
+            const double minimaleNauwkeurigheid = 0.90; // 90%
+            const double minimaleWpm = 20;              // 20 WPM
+
+            if (nauwkeurigheid >= minimaleNauwkeurigheid && wpm >= minimaleWpm)
+            {
+                levelGehaald = true;
+            }
+
+            var huidigLevel = PracticeSession.GeselecteerdLevel;
+            if (huidigLevel != null && levelGehaald)
+            {
+                PracticeSession.MarkLevelGehaald(huidigLevel.Nummer);
+                ResultaatTekst += " • Level gehaald!";
+            }
+            else
+            {
+                ResultaatTekst += " • Level NIET gehaald.";
+            }
+
             await Application.Current.MainPage.DisplayAlert(
-                "Oefening afgerond",
-                $"Tijd: {duur.TotalSeconds:F1} sec\nFouten: {fouten}\nNauwkeurigheid: {nauwkeurigheid:P0}",
+                "Resultaat",
+                $"{TijdTekst}\n{WpmTekst}\n{ResultaatTekst}",
                 "OK");
+
+            // na klaar: ook keyboard assist bijwerken (bijv. ✓)
+            UpdateKeyboardAssist();
+        }
+
+        private void UpdateKeyboardAssist()
+        {
+            if (string.IsNullOrEmpty(Oefentekst))
+            {
+                HuidigeToets = "";
+                HuidigeVinger = "";
+                return;
+            }
+
+            int index = UserText?.Length ?? 0;
+
+            if (index >= Oefentekst.Length)
+            {
+                HuidigeToets = "✓";
+                HuidigeVinger = "Tekst klaar";
+                return;
+            }
+
+            char c = Oefentekst[index];
+            HuidigeToets = c.ToString();
+
+            HuidigeVinger = c switch
+            {
+                'f' or 'F' => "Linker wijsvinger (F)",
+                'j' or 'J' => "Rechter wijsvinger (J)",
+                'd' or 'D' => "Linker middelvinger (D)",
+                'k' or 'K' => "Rechter middelvinger (K)",
+                's' or 'S' => "Linker ringvinger (S)",
+                'l' or 'L' => "Rechter ringvinger (L)",
+                'a' or 'A' => "Linker pink (A)",
+                ';' => "Rechter pink (;)",
+                'g' or 'G' => "Linker wijsvinger (G)",
+                'h' or 'H' => "Rechter wijsvinger (H)",
+                't' or 'T' => "Linker wijsvinger (T)",
+                'y' or 'Y' => "Rechter wijsvinger (Y)",
+                'r' or 'R' => "Linker wijsvinger (R)",
+                'u' or 'U' => "Rechter wijsvinger (U)",
+                'e' or 'E' => "Linker middelvinger (E)",
+                'i' or 'I' => "Rechter middelvinger (I)",
+                'w' or 'W' => "Linker ringvinger (W)",
+                'o' or 'O' => "Rechter ringvinger (O)",
+                'q' or 'Q' => "Linker pink (Q)",
+                'p' or 'P' => "Rechter pink (P)",
+                'z' or 'Z' => "Linker ringvinger (Z)",
+                'x' or 'X' => "Linker ringvinger (X)",
+                'c' or 'C' => "Linker middelvinger (C)",
+                'v' or 'V' => "Linker wijsvinger (V)",
+                'b' or 'B' => "Linker wijsvinger / duim",
+                'n' or 'N' => "Rechter wijsvinger (N)",
+                'm' or 'M' => "Rechter middelvinger (M)",
+                ' ' => "Spatiebalk (duim)",
+                _ => "Gebruik de juiste vinger voor deze toets"
+            };
         }
 
         private void BerekenFouten(out int fouten, out double nauwkeurigheid)
         {
-            string referentie = Oefentekst ?? string.Empty;
-            string input = UserText ?? string.Empty;
-
-            int maxLen = Math.Max(referentie.Length, input.Length);
+            fouten = 0;
             int correct = 0;
-            int fout = 0;
 
-            for (int i = 0; i < maxLen; i++)
+            for (int i = 0; i < Oefentekst.Length; i++)
             {
-                char refChar = i < referentie.Length ? referentie[i] : '\0';
-                char inpChar = i < input.Length ? input[i] : '\0';
-
-                if (refChar == '\0' && inpChar == '\0')
-                {
-                    // niks meer te vergelijken
-                    break;
-                }
-
-                if (refChar == inpChar && refChar != '\0')
+                if (i < UserText.Length && UserText[i] == Oefentekst[i])
                     correct++;
                 else
-                    fout++;
+                    fouten++;
             }
 
-            fouten = fout;
-            int totaal = correct + fout;
-            nauwkeurigheid = totaal > 0 ? (double)correct / totaal : 0;
+            nauwkeurigheid = Oefentekst.Length > 0
+                ? (double)correct / Oefentekst.Length
+                : 0;
+        }
+
+        private int TelWoorden(string tekst)
+        {
+            if (string.IsNullOrWhiteSpace(tekst))
+                return 0;
+
+            return tekst.Split(' ', StringSplitOptions.RemoveEmptyEntries).Length;
         }
     }
 }

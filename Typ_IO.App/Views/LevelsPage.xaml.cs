@@ -11,16 +11,25 @@ namespace BasisJaar2.Views
             InitializeComponent();
         }
 
-        private void OnStartLevelClicked(object sender, EventArgs e)
+        private async void OnStartLevelClicked(object sender, EventArgs e)
         {
-            // Haal het Level-object van deze button
-            if (sender is Button button && button.BindingContext is Level level)
+            if (sender is not Button button || button.BindingContext is not Level level)
+                return;
+
+            // 🔒 Check of het level wel unlocked is
+            if (!PracticeSession.IsLevelUnlocked(level.Nummer))
             {
-                // Level doorgeven aan PracticePage
-                PracticeSession.GeselecteerdLevel = level;
+                await Application.Current.MainPage.DisplayAlert(
+                    "Level vergrendeld",
+                    $"Je moet eerst level {level.Nummer - 1} halen voordat je dit level kunt spelen.",
+                    "OK");
+                return;
             }
 
-            // Navigeren naar PracticePage
+            // gekozen level opslaan
+            PracticeSession.GeselecteerdLevel = level;
+
+            // naar PracticePage
             if (ViewModels.MainPageViewModel.Current != null)
             {
                 ViewModels.MainPageViewModel.Current.SubpageContent =
@@ -28,7 +37,7 @@ namespace BasisJaar2.Views
             }
             else
             {
-                Application.Current?.MainPage?.DisplayAlert(
+                await Application.Current.MainPage.DisplayAlert(
                     "Error",
                     "MainPageViewModel not found",
                     "OK");
