@@ -8,7 +8,7 @@ using MySqlConnector;
 
 namespace Typ_IO.Core.Data
 {
-    public class MySqlConnectionFactory
+    public class MySqlConnectionFactory : IMySqlConnectionFactory
     {
         private readonly string _connectionString;
         public MySqlConnectionFactory()
