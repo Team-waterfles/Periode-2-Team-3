@@ -1,4 +1,5 @@
-﻿using MySqlConnector;
+﻿using System;
+using MySqlConnector;
 using System.Data;
 public interface IMySqlConnectionFactory
 {
