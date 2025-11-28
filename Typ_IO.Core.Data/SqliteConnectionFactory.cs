@@ -16,8 +16,8 @@ namespace Typ_IO.Core.Data
             _connectionString = new SqliteConnectionStringBuilder
             {
                 DataSource = dbPath,
-                Mode = SqliteOpenMode.ReadWriteCreate,
-                ForeignKeys = true
+                //Mode = SqliteOpenMode.ReadWriteCreate,
+                //ForeignKeys = true
             }.ToString();
         }
 
