@@ -8,6 +8,10 @@ using MySqlConnector;
 
 namespace Typ_IO.Core.Data
 {
+    public interface IMySqlConnectionFactory
+    {
+        Task<MySqlConnection> CreateOpenConnectionAsync();
+    }
     public class MySqlConnectionFactory : IMySqlConnectionFactory
     {
         private readonly string _connectionString;
