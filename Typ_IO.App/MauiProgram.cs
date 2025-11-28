@@ -21,7 +21,7 @@ namespace BasisJaar2
 
             // DI-registraties
             builder.Services.AddSingleton<IMySqlConnectionFactory>(_ => new MySqlConnectionFactory());
-            builder.Services.AddSingleton<MySqlSchemaMigrator>();
+            // builder.Services.AddSingleton<MySqlSchemaMigrator>();
 
 #if DEBUG
             builder.Logging.AddDebug();
@@ -30,11 +30,11 @@ namespace BasisJaar2
             var app = builder.Build();
 
             // Schema migreren + seeden
-            using var scope = app.Services.CreateScope();
-            var migrator = scope.ServiceProvider.GetRequiredService<MySqlSchemaMigrator>();
+            // using var scope = app.Services.CreateScope();
+            // var migrator = scope.ServiceProvider.GetRequiredService<MySqlSchemaMigrator>();
 
-            var task = migrator.MigrateAsync();
-            task.GetAwaiter().GetResult();
+            // var task = migrator.MigrateAsync();
+            // task.GetAwaiter().GetResult();
             //task = SeedAsync(scope.ServiceProvider);
             //task.GetAwaiter().GetResult();
 
