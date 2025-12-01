@@ -22,7 +22,7 @@ namespace BasisJaar2.ViewModels
             if (MainPageViewModel.Current != null)
             {
                 MainPageViewModel.Current.SubpageContent =
-                    new BasisJaar2.Views.LevelsPage();
+                    new BasisJaar2.Views.MoeilijkheidsgraadPage();
             }
             else
             {
