@@ -22,20 +22,8 @@
                FontAttributes="Bold"
                HorizontalOptions="Center" />
 
-		<!-- Oefentekst -->
-		<Label Text="Oefentekst:"
-               FontAttributes="Bold"
-               HorizontalOptions="Center" />
 
-		<Frame Padding="10"
-               BackgroundColor="#eeeeee"
-               HorizontalOptions="Center">
-			<Label Text="{Binding Oefentekst}"
-                   LineBreakMode="WordWrap"
-                   HorizontalTextAlignment="Center" />
-		</Frame>
-
-		<!-- Keyboard assist -->
+	  <!-- Keyboard assist -->
 		<Label Text="Welke toets nu:"
                FontAttributes="Bold"
                HorizontalOptions="Center"
@@ -47,7 +35,7 @@
                HorizontalOptions="Center" />
 
 		<Label Text="{Binding HuidigeVinger}"
-               FontSize="12"
+               FontSize="20"
                HorizontalOptions="Center" />
 
 		<!-- Gebruiker typt hier -->
