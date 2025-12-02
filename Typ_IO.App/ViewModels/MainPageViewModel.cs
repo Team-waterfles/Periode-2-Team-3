@@ -5,7 +5,7 @@ namespace BasisJaar2.ViewModels
 {
     public class MainPageViewModel : BindableObject
     {
-        // dit is nieuw! Een static property zodat we overal bij kunnen
+        // Globale referentie zodat andere viewmodels kunnen navigeren
         public static MainPageViewModel? Current { get; private set; }
 
         private ContentView? _subpageContent;
@@ -20,7 +20,8 @@ namespace BasisJaar2.ViewModels
             }
         }
 
-        private bool _isInSettings => SubpageContent is Views.Settings;
+        // Hulpproperty: zijn we in de Settings-pagina?
+        private bool IsInSettings => SubpageContent is Views.Settings;
 
         private string? _toolbarIcon;
         public string? ToolbarIcon
@@ -40,17 +41,19 @@ namespace BasisJaar2.ViewModels
 
         public MainPageViewModel()
         {
-            // zet de Current property zodat andere classes er bij kunnen
+            // static instance zetten
             Current = this;
 
+            // Startscherm als eerste pagina
             SubpageContent = new Views.StartScreen();
+
             ToolbarCommand = new Command(OnToolbarClicked);
             UpdateToolbarProperties();
         }
 
         private void OnToolbarClicked()
         {
-            if (_isInSettings)
+            if (IsInSettings)
                 SubpageContent = new Views.StartScreen();
             else
                 SubpageContent = new Views.Settings();
@@ -58,15 +61,17 @@ namespace BasisJaar2.ViewModels
 
         private void UpdateToolbarProperties()
         {
-            if (_isInSettings)
+            if (IsInSettings)
             {
-                ToolbarIcon = null;           // Important for text-only button
-                ToolbarText = "Exit";          // Must be non-empty
+                // In settings: toon "Exit" (terug-knop)
+                ToolbarIcon = null;   // geen icoon
+                ToolbarText = "Exit"; // tekstknop
             }
             else
             {
-                ToolbarIcon = "settings.png";  // Icon for default state
-                ToolbarText = null;            // No text
+                // Normaal: toon settings-icoon zonder tekst
+                ToolbarIcon = "settings.png";
+                ToolbarText = null;
             }
         }
     }
