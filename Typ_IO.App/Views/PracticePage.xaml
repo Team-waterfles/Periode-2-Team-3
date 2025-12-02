@@ -5,47 +5,46 @@
              x:Class="BasisJaar2.Views.PracticePage"
              x:DataType="vm:PracticePageViewModel">
 
-	<ContentView.BindingContext>
-		<vm:PracticePageViewModel />
-	</ContentView.BindingContext>
+    <ContentView.BindingContext>
+        <vm:PracticePageViewModel />
+    </ContentView.BindingContext>
 
-	<!-- Hele content in het midden -->
-	<VerticalStackLayout Padding="20"
+    <!-- Hele content in het midden -->
+    <VerticalStackLayout Padding="20"
                          Spacing="15"
                          VerticalOptions="Center"
                          HorizontalOptions="Center"
                          WidthRequest="450">
 
-		<!-- Naam van het gekozen level -->
-		<Label Text="{Binding LevelNaam}"
+        <!-- Naam van het gekozen level -->
+        <Label Text="{Binding LevelNaam}"
                FontSize="24"
                FontAttributes="Bold"
                HorizontalOptions="Center" />
 
-
-	  <!-- Keyboard assist -->
-		<Label Text="Welke toets nu:"
+        <!-- Keyboard assist -->
+        <Label Text="Welke toets nu:"
                FontAttributes="Bold"
                HorizontalOptions="Center"
                Margin="0,10,0,0" />
 
-		<Label Text="{Binding HuidigeToets}"
+        <Label Text="{Binding HuidigeToets}"
                FontSize="32"
                FontAttributes="Bold"
                HorizontalOptions="Center" />
 
-		<Label Text="{Binding HuidigeVinger}"
+        <Label Text="{Binding HuidigeVinger}"
                FontSize="20"
                HorizontalOptions="Center" />
 
-		<!-- Gebruiker typt hier -->
-		<Label Text="Jouw tekst:"
+        <!-- Gebruiker typt hier -->
+        <Label Text="Jouw tekst:"
                FontAttributes="Bold"
                HorizontalOptions="Center"
                Margin="10,10,10,0" />
 
-		<!-- Editor: tekst in het midden, kleiner, autosize, lock via KanTypen -->
-		<Editor x:Name="UserEditor"
+        <!-- Editor: tekst in het midden, kleiner, autosize, lock via KanTypen -->
+        <Editor x:Name="UserEditor"
                 Text="{Binding UserText}"
                 WidthRequest="400"
                 FontSize="12"
@@ -54,46 +53,46 @@
                 IsEnabled="{Binding KanTypen}"
                 TextChanged="OnUserTextChanged" />
 
-		<!-- Live feedback -->
-		<Label Text="Feedback:"
+        <!-- Live feedback -->
+        <Label Text="Feedback:"
                FontAttributes="Bold"
                HorizontalOptions="Center"
                Margin="0,10,0,0" />
 
-		<Label x:Name="LiveFeedbackLabel"
+        <Label x:Name="LiveFeedbackLabel"
                LineBreakMode="WordWrap"
                WidthRequest="400"
                HorizontalOptions="Center"
                HorizontalTextAlignment="Center" />
 
-		<!-- Start / Klaar knoppen -->
-		<HorizontalStackLayout Spacing="10"
+        <!-- Start / Klaar knoppen -->
+        <HorizontalStackLayout Spacing="10"
                                Margin="0,20,0,0"
                                HorizontalOptions="Center">
-			<Button Text="Start"
+            <Button Text="Start"
                     Command="{Binding StartCommand}"
                     IsEnabled="{Binding KanStarten}" />
 
-			<Button Text="Klaar"
+            <Button Text="Klaar"
                     Command="{Binding KlaarCommand}"
                     IsEnabled="{Binding KanKlaar}" />
-		</HorizontalStackLayout>
+        </HorizontalStackLayout>
 
-		<!-- Resultaten (tijd / WPM / fouten) -->
-		<VerticalStackLayout Spacing="5"
+        <!-- Resultaten (tijd / WPM / fouten) -->
+        <VerticalStackLayout Spacing="5"
                              Margin="0,15,0,0"
                              HorizontalOptions="Center">
-			<Label Text="{Binding TijdTekst}"
+            <Label Text="{Binding TijdTekst}"
                    HorizontalOptions="Center" />
 
-			<Label Text="{Binding WpmTekst}"
+            <Label Text="{Binding WpmTekst}"
                    HorizontalOptions="Center" />
 
-			<Label Text="{Binding ResultaatTekst}"
+            <Label Text="{Binding ResultaatTekst}"
                    HorizontalOptions="Center"
                    FontAttributes="Bold"
                    TextColor="Red" />
-		</VerticalStackLayout>
+        </VerticalStackLayout>
 
-	</VerticalStackLayout>
+    </VerticalStackLayout>
 </ContentView>

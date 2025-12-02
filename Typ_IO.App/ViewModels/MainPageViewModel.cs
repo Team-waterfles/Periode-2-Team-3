@@ -46,7 +46,6 @@ namespace BasisJaar2.ViewModels
 
             // Startscherm als eerste pagina
             SubpageContent = new Views.StartScreen();
-
             ToolbarCommand = new Command(OnToolbarClicked);
             UpdateToolbarProperties();
         }

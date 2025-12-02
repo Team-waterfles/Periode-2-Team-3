@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Maui.Controls;
 using BasisJaar2.Models;
+using BasisJaar2.ViewModels;
 
 namespace BasisJaar2.Views
 {
@@ -9,6 +10,7 @@ namespace BasisJaar2.Views
         public LevelsPage()
         {
             InitializeComponent();
+            BindingContext = new LevelsViewModel();
         }
 
         private async void OnStartLevelClicked(object sender, EventArgs e)
@@ -16,7 +18,7 @@ namespace BasisJaar2.Views
             if (sender is not Button button || button.BindingContext is not Level level)
                 return;
 
-            // 🔒 Check of het level wel unlocked is
+            //  Check of het level wel unlocked is
             if (!PracticeSession.IsLevelUnlocked(level.Nummer))
             {
                 await Application.Current.MainPage.DisplayAlert(

@@ -21,6 +21,7 @@ namespace BasisJaar2.ViewModels
         {
             if (MainPageViewModel.Current != null)
             {
+                // Navigeer naar moeilijkheidsgraad (keuze) voordat levels getoond worden
                 MainPageViewModel.Current.SubpageContent =
                     new BasisJaar2.Views.MoeilijkheidsgraadPage();
             }
@@ -37,8 +38,7 @@ namespace BasisJaar2.ViewModels
         {
             if (MainPageViewModel.Current != null)
             {
-                MainPageViewModel.Current.SubpageContent =
-                    new BasisJaar2.Views.LevelsPage();
+                MainPageViewModel.Current.SubpageContent = new BasisJaar2.Views.LevelsPage();
             }
             else
             {
