@@ -5,6 +5,10 @@ namespace BasisJaar2.ViewModels
 {
     public class MoeilijkheidsgraadViewModel : BindableObject
     {
+        // Event om navigatie te triggeren
+        public event EventHandler? NavigeerNaarLevelSelectie;
+        public event EventHandler<string>? MoeilijkheidsgraadGekozen;
+
         // commands voor de knoppen
         public ICommand MakkelijkCommand { get; }
         public ICommand NormaalCommand { get; }
@@ -23,31 +27,28 @@ namespace BasisJaar2.ViewModels
         // deze functie wordt aangeroepen als je op Makkelijk klikt
         private void OnMakkelijk()
         {
-            // hier kan je later code toevoegen voor het makkelijke niveau
-            if (MainPageViewModel.Current != null)
-            {
-                MainPageViewModel.Current.SubpageContent = new Views.Oefening();
-            }
+            // Geef door welke moeilijkheidsgraad gekozen is
+            MoeilijkheidsgraadGekozen?.Invoke(this, "Makkelijk");
+            // Navigeer naar level selectie
+            NavigeerNaarLevelSelectie?.Invoke(this, EventArgs.Empty);
         }
 
         // deze functie wordt aangeroepen als je op Normaal klikt
         private void OnNormaal()
         {
-            // hier kan je later code toevoegen voor het normale niveau
-            if (Application.Current?.MainPage != null)
-            {
-                Application.Current.MainPage.DisplayAlert("Moeilijkheidsgraad", "Je hebt Normaal gekozen!", "OK");
-            }
+            // Geef door welke moeilijkheidsgraad gekozen is
+            MoeilijkheidsgraadGekozen?.Invoke(this, "Normaal");
+            // Navigeer naar level selectie
+            NavigeerNaarLevelSelectie?.Invoke(this, EventArgs.Empty);
         }
 
         // deze functie wordt aangeroepen als je op Moeilijk klikt
         private void OnMoeilijk()
         {
-            // hier kan je later code toevoegen voor het moeilijke niveau
-            if (Application.Current?.MainPage != null)
-            {
-                Application.Current.MainPage.DisplayAlert("Moeilijkheidsgraad", "Je hebt Moeilijk gekozen!", "OK");
-            }
+            // Geef door welke moeilijkheidsgraad gekozen is
+            MoeilijkheidsgraadGekozen?.Invoke(this, "Moeilijk");
+            // Navigeer naar level selectie
+            NavigeerNaarLevelSelectie?.Invoke(this, EventArgs.Empty);
         }
 
         // deze functie wordt aangeroepen als je op Exit klikt

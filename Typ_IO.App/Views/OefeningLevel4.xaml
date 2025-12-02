@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BasisJaar2.Views.OefeningLevel4">
+    <VerticalStackLayout Padding="20" Spacing="20" VerticalOptions="Center">
+        <Label 
+            Text="Level 4 - Zinnen"
+            FontSize="32"
+            FontAttributes="Bold"
+            HorizontalOptions="Center"
+            TextColor="Black" />
+
+        <Label 
+            Text="Oefen met complete zinnen"
+            FontSize="20"
+            HorizontalOptions="Center"
+            TextColor="#666666"
+            Margin="0,0,0,30" />
+
+        <Label 
+            Text="De kat zit op de mat."
+            FontSize="24"
+            HorizontalOptions="Center"
+            TextColor="Black" />
+
+        <Label 
+            Text="[Hier komt de Level 4 oefening]"
+            FontSize="18"
+            HorizontalOptions="Center"
+            TextColor="#999999"
+            Margin="0,20,0,0" />
+    </VerticalStackLayout>
+</ContentView>

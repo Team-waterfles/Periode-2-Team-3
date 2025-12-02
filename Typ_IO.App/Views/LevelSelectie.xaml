@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BasisJaar2.Views.LevelSelectie">
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
+            <Label 
+                Text="Selecteer een Level"
+                FontSize="32"
+                FontAttributes="Bold"
+                HorizontalOptions="Center"
+                TextColor="Black"
+                Margin="0,20,0,30" />
+
+            <!-- Level 1 -->
+            <Border 
+                StrokeThickness="2"
+                Stroke="Black"
+                Background="White"
+                StrokeShape="RoundRectangle 10"
+                Padding="20"
+                Margin="0,5">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Level 1 - Basis Letters" 
+                           FontSize="20" 
+                           FontAttributes="Bold"
+                           TextColor="Black"/>
+                    <Label Text="Oefen met de basis toetsen: A, S, D, F, J, K, L" 
+                           FontSize="14"
+                           TextColor="#666666"/>
+                    <Border 
+                        StrokeThickness="2"
+                        Stroke="Black"
+                        Background="#061f4f"
+                        StrokeShape="RoundRectangle 5"
+                        WidthRequest="150"
+                        HeightRequest="40"
+                        HorizontalOptions="End">
+                        <Label 
+                            Text="Start Level 1" 
+                            FontSize="14" 
+                            TextColor="White"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center" />
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnLevel1Clicked" />
+                        </Border.GestureRecognizers>
+                    </Border>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Level 2 -->
+            <Border 
+                StrokeThickness="2"
+                Stroke="Black"
+                Background="White"
+                StrokeShape="RoundRectangle 10"
+                Padding="20"
+                Margin="0,5">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Level 2 - Uitgebreid" 
+                           FontSize="20" 
+                           FontAttributes="Bold"
+                           TextColor="Black"/>
+                    <Label Text="Oefen met meer letters en combinaties" 
+                           FontSize="14"
+                           TextColor="#666666"/>
+                    <Border 
+                        StrokeThickness="2"
+                        Stroke="Black"
+                        Background="#061f4f"
+                        StrokeShape="RoundRectangle 5"
+                        WidthRequest="150"
+                        HeightRequest="40"
+                        HorizontalOptions="End">
+                        <Label 
+                            Text="Start Level 2" 
+                            FontSize="14" 
+                            TextColor="White"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center" />
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnLevel2Clicked" />
+                        </Border.GestureRecognizers>
+                    </Border>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Level 3 -->
+            <Border 
+                StrokeThickness="2"
+                Stroke="Black"
+                Background="White"
+                StrokeShape="RoundRectangle 10"
+                Padding="20"
+                Margin="0,5">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Level 3 - Woorden" 
+                           FontSize="20" 
+                           FontAttributes="Bold"
+                           TextColor="Black"/>
+                    <Label Text="Oefen met complete woorden" 
+                           FontSize="14"
+                           TextColor="#666666"/>
+                    <Border 
+                        StrokeThickness="2"
+                        Stroke="Black"
+                        Background="#061f4f"
+                        StrokeShape="RoundRectangle 5"
+                        WidthRequest="150"
+                        HeightRequest="40"
+                        HorizontalOptions="End">
+                        <Label 
+                            Text="Start Level 3" 
+                            FontSize="14" 
+                            TextColor="White"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center" />
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnLevel3Clicked" />
+                        </Border.GestureRecognizers>
+                    </Border>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Level 4 -->
+            <Border 
+                StrokeThickness="2"
+                Stroke="Black"
+                Background="White"
+                StrokeShape="RoundRectangle 10"
+                Padding="20"
+                Margin="0,5">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Level 4 - Zinnen" 
+                           FontSize="20" 
+                           FontAttributes="Bold"
+                           TextColor="Black"/>
+                    <Label Text="Oefen met complete zinnen" 
+                           FontSize="14"
+                           TextColor="#666666"/>
+                    <Border 
+                        StrokeThickness="2"
+                        Stroke="Black"
+                        Background="#061f4f"
+                        StrokeShape="RoundRectangle 5"
+                        WidthRequest="150"
+                        HeightRequest="40"
+                        HorizontalOptions="End">
+                        <Label 
+                            Text="Start Level 4" 
+                            FontSize="14" 
+                            TextColor="White"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center" />
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnLevel4Clicked" />
+                        </Border.GestureRecognizers>
+                    </Border>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Level 5 -->
+            <Border 
+                StrokeThickness="2"
+                Stroke="Black"
+                Background="White"
+                StrokeShape="RoundRectangle 10"
+                Padding="20"
+                Margin="0,5">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Level 5 - Paragrafen" 
+                           FontSize="20" 
+                           FontAttributes="Bold"
+                           TextColor="Black"/>
+                    <Label Text="Oefen met langere teksten en paragrafen" 
+                           FontSize="14"
+                           TextColor="#666666"/>
+                    <Border 
+                        StrokeThickness="2"
+                        Stroke="Black"
+                        Background="#061f4f"
+                        StrokeShape="RoundRectangle 5"
+                        WidthRequest="150"
+                        HeightRequest="40"
+                        HorizontalOptions="End">
+                        <Label 
+                            Text="Start Level 5" 
+                            FontSize="14" 
+                            TextColor="White"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center" />
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnLevel5Clicked" />
+                        </Border.GestureRecognizers>
+                    </Border>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Terug knop -->
+            <Border 
+                StrokeThickness="2"
+                Stroke="Black"
+                Background="#666666"
+                StrokeShape="RoundRectangle 5"
+                WidthRequest="250"
+                HeightRequest="50"
+                HorizontalOptions="Center"
+                Margin="0,20,0,0">
+                <Label 
+                    Text="Terug naar Moeilijkheidsgraad" 
+                    FontSize="16" 
+                    TextColor="White"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center" />
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnTerugClicked" />
+                </Border.GestureRecognizers>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentView>
