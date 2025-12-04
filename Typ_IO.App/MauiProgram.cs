@@ -1,5 +1,7 @@
 ﻿using BasisJaar2.Helpers;
 using Typ_IO.Core.Data;
+using Typ_IO.Core.Models;
+using Typ_IO.Core.Repositories;
 using BasisJaar2.Views;
 using BasisJaar2.ViewModels;
 using Microsoft.Extensions.Logging;
@@ -39,12 +41,41 @@ namespace BasisJaar2
 
             var task = migrator.MigrateAsync();
             task.GetAwaiter().GetResult();
-            // SeedAsync nog toevoegen.
-            // (Dit is voor data die in de database komt als een gebruiker de applicatie voor het eerst opstart)
+
+            // Data die in de database komt als een gebruiker de applicatie voor het eerst opstart
+            task = SeedAsync(scope.ServiceProvider);
+            task.GetAwaiter().GetResult();
+
 
             ServiceHelper.Initialize(app.Services);
 
             return app;
+        }
+        private static async Task SeedAsync(IServiceProvider sp)
+        {
+            var standaardlevels = sp.GetRequiredService<IStandaardlevelRepository>();
+            var oefenlevels = sp.GetRequiredService<IOefenlevelRepository>();
+
+            if ((await standaardlevels.ListAsync()).Count == 0)
+            {
+                var level = new Standaardlevel
+                {
+                    Naam = "Oefenlevel",
+                    Tekst = "Pa's wijze lynx bezag vroom het fikse aquaduct",
+                    Moeilijkheidsgraad = 1
+                };
+                await standaardlevels.AddAsync(level);
+            }
+
+            if ((await oefenlevels.ListAsync()).Count == 0)
+            {
+                var level = new Oefenlevel
+                {
+                    Naam = "2 vingers",
+                    Letteropties = "fj "
+                };
+                await oefenlevels.AddAsync(level);
+            }
         }
     }
 }

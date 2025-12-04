@@ -25,4 +25,8 @@
 		<PackageReference Include="MySqlConnector" Version="2.5.0" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\Typ_IO.Core\Typ_IO.Core.csproj" />
+	</ItemGroup>
+
 </Project>
