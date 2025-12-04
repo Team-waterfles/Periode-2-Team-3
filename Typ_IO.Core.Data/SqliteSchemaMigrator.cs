@@ -12,18 +12,16 @@
 
             cmd.CommandText = @"
             CREATE TABLE IF NOT EXISTS `Standaardlevel` (
-              `Id` INT UNSIGNED NOT NULL,
+              `Id` INTEGER PRIMARY KEY AUTOINCREMENT,
               `Naam` VARCHAR(50) NOT NULL,
               `Tekst` VARCHAR(2000) NOT NULL,
-              `Moeilijkheidsgraad` INT UNSIGNED NOT NULL,
-            PRIMARY KEY (`Id`));
+              `Moeilijkheidsgraad` INT UNSIGNED NOT NULL
+            );
             CREATE TABLE IF NOT EXISTS `Oefenlevel` (
-              `Id` INT UNSIGNED NOT NULL,
+              `Id` INTEGER PRIMARY KEY AUTOINCREMENT,
               `Naam` VARCHAR(50) NOT NULL,
-              `Letteropties` VARCHAR(2000) NOT NULL,
-            PRIMARY KEY (`Id`));
-            CREATE UNIQUE INDEX IF NOT EXISTS `Id_Standaardlevel_UNIQUE` ON Standaardlevel(Id);
-            CREATE UNIQUE INDEX IF NOT EXISTS `Id_Oefenlevel_UNIQUE` ON Oefenlevel(Id);
+              `Letteropties` VARCHAR(2000) NOT NULL
+            );
             ";
             await cmd.ExecuteNonQueryAsync();
         }

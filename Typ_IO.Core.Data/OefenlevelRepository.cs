@@ -14,7 +14,7 @@ namespace Typ_IO.Core.Data
             using var cmd = conn.CreateCommand();
             cmd.CommandText = "INSERT INTO Oefenlevel (Naam, Letteropties) VALUES ($naam, $letteropties); SELECT last_insert_rowid();";
             cmd.Parameters.AddWithValue("$naam", level.Naam);
-            cmd.Parameters.AddWithValue("tekst", level.Letteropties);
+            cmd.Parameters.AddWithValue("$letteropties", level.Letteropties);
             var writer = await cmd.ExecuteScalarAsync(ct);
             if (writer is long)
                 level.GetType().GetProperty("Id")?.SetValue(level, Convert.ToInt32(writer));
