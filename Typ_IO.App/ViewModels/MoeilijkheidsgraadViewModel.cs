@@ -1,17 +1,18 @@
 ﻿using Microsoft.Maui.Controls;
 using System.Windows.Input;
+using BasisJaar2.Views;
 
 namespace BasisJaar2.ViewModels
 {
     public class MoeilijkheidsgraadViewModel : BindableObject
     {
-        // commands voor de knoppen
+        // Commands voor de knoppen
         public ICommand MakkelijkCommand { get; }
         public ICommand NormaalCommand { get; }
         public ICommand MoeilijkCommand { get; }
         public ICommand ExitCommand { get; }
 
-        // constructor - hier maken we de commands aan
+        // Constructor
         public MoeilijkheidsgraadViewModel()
         {
             MakkelijkCommand = new Command(OnMakkelijk);
@@ -20,40 +21,33 @@ namespace BasisJaar2.ViewModels
             ExitCommand = new Command(OnExit);
         }
 
-        // deze functie wordt aangeroepen als je op Makkelijk klikt
+        // Functies voor de buttons
         private void OnMakkelijk()
         {
-            // hier kan je later code toevoegen voor het makkelijke niveau
             if (MainPageViewModel.Current != null)
             {
-                MainPageViewModel.Current.SubpageContent = new Views.Oefening();
+                MainPageViewModel.Current.SubpageContent = new Oefening("Easy");
             }
         }
 
-        // deze functie wordt aangeroepen als je op Normaal klikt
         private void OnNormaal()
         {
-            // hier kan je later code toevoegen voor het normale niveau
-            if (Application.Current?.MainPage != null)
+            if (MainPageViewModel.Current != null)
             {
-                Application.Current.MainPage.DisplayAlert("Moeilijkheidsgraad", "Je hebt Normaal gekozen!", "OK");
+                MainPageViewModel.Current.SubpageContent = new Oefening("Medium");
             }
         }
 
-        // deze functie wordt aangeroepen als je op Moeilijk klikt
         private void OnMoeilijk()
         {
-            // hier kan je later code toevoegen voor het moeilijke niveau
-            if (Application.Current?.MainPage != null)
+            if (MainPageViewModel.Current != null)
             {
-                Application.Current.MainPage.DisplayAlert("Moeilijkheidsgraad", "Je hebt Moeilijk gekozen!", "OK");
+                MainPageViewModel.Current.SubpageContent = new Oefening("Hard");
             }
         }
 
-        // deze functie wordt aangeroepen als je op Exit klikt
         private void OnExit()
         {
-            // ga terug naar het startscherm
             if (MainPageViewModel.Current != null)
             {
                 MainPageViewModel.Current.SubpageContent = new Views.StartScreen();

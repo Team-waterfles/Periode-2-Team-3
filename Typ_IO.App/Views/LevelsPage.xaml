@@ -6,7 +6,6 @@
              x:Class="BasisJaar2.Views.LevelsPage"
              x:DataType="vm:LevelsViewModel">
 
-
     <ContentView.BindingContext>
         <vm:LevelsViewModel />
     </ContentView.BindingContext>
@@ -22,9 +21,7 @@
         <CollectionView ItemsSource="{Binding Levels}"
                         Margin="0,10"
                         SelectionMode="None">
-
             <CollectionView.ItemTemplate>
-                <!-- elk item is een Level -->
                 <DataTemplate x:DataType="models:Level">
                     <Frame Margin="0,8"
                            Padding="12"
@@ -36,18 +33,17 @@
                                    FontAttributes="Bold"
                                    FontSize="20"
                                    TextColor="White" />
-
                             <Label Text="{Binding Beschrijving}"
                                    FontSize="14"
                                    TextColor="#dddddd" />
-
                             <Button Text="Start level"
                                     Margin="0,8,0,0"
                                     Padding="5"
                                     FontSize="14"
                                     TextColor="White"
                                     BackgroundColor="#0c2e6b"
-                                    Clicked="OnStartLevelClicked" />
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:LevelsViewModel}}, Path=StartLevelCommand}"
+                                    CommandParameter="{Binding .}" />
                         </VerticalStackLayout>
                     </Frame>
                 </DataTemplate>

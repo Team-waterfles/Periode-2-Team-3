@@ -4,13 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BasisJaar2.Models
+namespace BasisJaar2.Models;
+
+public class Level
 {
-    public class Level
-    {
-        public int Nummer { get; set; }
-        public string Naam { get; set; } = string.Empty;
-        public string Beschrijving { get; set; } = string.Empty;
-        public string Oefentekst { get; set; } = string.Empty;
-    }
+    public int Nummer { get; set; }
+    public string Naam { get; set; }
+    public string Beschrijving { get; set; }
+
+    // Voor UI
+    public bool IsUnlocked { get; set; }
+    public bool IsCompleted { get; set; }
 }

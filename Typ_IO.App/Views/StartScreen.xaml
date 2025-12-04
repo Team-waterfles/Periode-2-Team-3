@@ -8,70 +8,110 @@
     <VerticalStackLayout VerticalOptions="Center"
                          HorizontalOptions="Center"
                          Spacing="20">
-
+        
         <!-- Play Button -->
-        <Border StrokeThickness="0"
-                Background="#061f4f"
-                StrokeShape="RoundRectangle 20"
-                HorizontalOptions="Center">
-            <HorizontalStackLayout Spacing="6" Padding="10,5">
+        <Border WidthRequest="180"
+        StrokeThickness="0"
+        Background="#061f4f"
+        StrokeShape="RoundRectangle 20"
+        HorizontalOptions="Center">
+
+            <Grid ColumnDefinitions="Auto, *, Auto" Padding="10,5">
+
+                <!-- Left icon -->
                 <Image Source="play.png"
-                       HeightRequest="32"
-                       WidthRequest="32"
-                       VerticalOptions="Center" />
+               Grid.Column="0"
+               HeightRequest="32"
+               WidthRequest="32"
+               VerticalOptions="Center" />
+
+                <!-- Center text -->
                 <Label Text="Play"
-                       TextColor="White"
-                       FontSize="24"
-                       VerticalOptions="Center"
-                       Padding="10,5" />
-            </HorizontalStackLayout>
+               Grid.Column="1"
+               TextColor="White"
+               FontSize="24"
+               VerticalOptions="Center"
+               HorizontalTextAlignment="Center" />
+
+                <!-- Right invisible spacer -->
+                <BoxView Grid.Column="2" WidthRequest="32" Opacity="0"/>
+            </Grid>
+
             <Border.GestureRecognizers>
                 <TapGestureRecognizer Command="{Binding PlayCommand}" />
             </Border.GestureRecognizers>
         </Border>
 
-        <!--  Practice Button -->
-        <Border StrokeThickness="0"
-                Background="#061f4f"
-                StrokeShape="RoundRectangle 20"
-                HorizontalOptions="Center">
-            <HorizontalStackLayout Spacing="6" Padding="10,5">
-              
+
+
+        <!-- Practice Button -->
+        <Border WidthRequest="180"
+        StrokeThickness="0"
+        Background="#061f4f"
+        StrokeShape="RoundRectangle 20"
+        HorizontalOptions="Center">
+
+            <Grid ColumnDefinitions="Auto, *, Auto" Padding="10,5">
+
+                <!-- Left icon -->
                 <Image Source="play.png"
-                       HeightRequest="32"
-                       WidthRequest="32"
-                       VerticalOptions="Center" />
+               Grid.Column="0"
+               HeightRequest="32"
+               WidthRequest="32"
+               VerticalOptions="Center" />
+
+                <!-- Center text -->
                 <Label Text="Practice"
-                       TextColor="White"
-                       FontSize="24"
-                       VerticalOptions="Center"
-                       Padding="10,5" />
-            </HorizontalStackLayout>
+               Grid.Column="1"
+               TextColor="White"
+               FontSize="24"
+               VerticalOptions="Center"
+               HorizontalTextAlignment="Center" />
+
+                <!-- Right invisible spacer -->
+                <BoxView Grid.Column="2" WidthRequest="32" Opacity="0"/>
+            </Grid>
+
             <Border.GestureRecognizers>
                 <TapGestureRecognizer Command="{Binding PracticeCommand}" />
             </Border.GestureRecognizers>
         </Border>
 
+
+
         <!-- Exit Button -->
-        <Border StrokeThickness="0"
-                Background="#061f4f"
-                StrokeShape="RoundRectangle 20"
-                HorizontalOptions="Center">
-            <HorizontalStackLayout Spacing="6" Padding="10,5">
+        <Border WidthRequest="180"
+        StrokeThickness="0"
+        Background="#061f4f"
+        StrokeShape="RoundRectangle 20"
+        HorizontalOptions="Center">
+
+            <Grid ColumnDefinitions="Auto, *, Auto" Padding="10,5">
+
+                <!-- Left icon -->
                 <Image Source="exit.png"
-                       HeightRequest="32"
-                       WidthRequest="32"
-                       VerticalOptions="Center" />
+               Grid.Column="0"
+               HeightRequest="32"
+               WidthRequest="32"
+               VerticalOptions="Center" />
+
+                <!-- Center text -->
                 <Label Text="Exit"
-                       TextColor="White"
-                       FontSize="24"
-                       VerticalOptions="Center"
-                       Padding="10,5" />
-            </HorizontalStackLayout>
+               Grid.Column="1"
+               TextColor="White"
+               FontSize="24"
+               VerticalOptions="Center"
+               HorizontalTextAlignment="Center" />
+
+                <!-- Right invisible spacer -->
+                <BoxView Grid.Column="2" WidthRequest="32" Opacity="0"/>
+            </Grid>
+
             <Border.GestureRecognizers>
                 <TapGestureRecognizer Command="{Binding ExitCommand}" />
             </Border.GestureRecognizers>
         </Border>
+
 
     </VerticalStackLayout>
 </ContentView>
