@@ -16,12 +16,11 @@
               `Naam` VARCHAR(50) NOT NULL,
               `Tekst` VARCHAR(2000) NOT NULL,
               `Moeilijkheidsgraad` INT UNSIGNED NOT NULL,
-              `NummerBestand` VARCHAR(100) NULL,
             PRIMARY KEY (`Id`));
             CREATE TABLE IF NOT EXISTS `Oefenlevel` (
               `Id` INT UNSIGNED NOT NULL,
               `Naam` VARCHAR(50) NOT NULL,
-              `LetterOpties` VARCHAR(2000) NOT NULL,
+              `Letteropties` VARCHAR(2000) NOT NULL,
             PRIMARY KEY (`Id`));
             CREATE UNIQUE INDEX IF NOT EXISTS `Id_Standaardlevel_UNIQUE` ON Standaardlevel(Id);
             CREATE UNIQUE INDEX IF NOT EXISTS `Id_Oefenlevel_UNIQUE` ON Oefenlevel(Id);
