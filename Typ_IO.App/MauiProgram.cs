@@ -29,6 +29,9 @@ namespace BasisJaar2
             builder.Services.AddSingleton<ISqliteConnectionFactory>(_ => new SqliteConnectionFactory(dbPath));
             builder.Services.AddSingleton<SqliteSchemaMigrator>();
 
+            builder.Services.AddScoped<IStandaardlevelRepository, StandaardlevelRepository>();
+            builder.Services.AddScoped<IOefenlevelRepository, OefenlevelRepository>();
+
 #if DEBUG
             builder.Logging.AddDebug();
 #endif
