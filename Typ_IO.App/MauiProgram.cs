@@ -23,7 +23,6 @@ namespace BasisJaar2
                 });
 
             // DI-registraties
-            builder.Services.AddSingleton<IMySqlConnectionFactory>(_ => new MySqlConnectionFactory());
 
             builder.Services.AddSingleton<ISqliteConnectionFactory>(_ => new SqliteConnectionFactory(dbPath));
             builder.Services.AddSingleton<SqliteSchemaMigrator>();
