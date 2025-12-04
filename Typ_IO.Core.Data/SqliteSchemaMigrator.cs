@@ -11,16 +11,20 @@
             using var cmd = conn.CreateCommand();
 
             cmd.CommandText = @"
-            CREATE TABLE IF NOT EXISTS `Level` (
+            CREATE TABLE IF NOT EXISTS `Standaardlevel` (
               `Id` INT UNSIGNED NOT NULL,
               `Naam` VARCHAR(50) NOT NULL,
               `Tekst` VARCHAR(2000) NOT NULL,
               `Moeilijkheidsgraad` INT UNSIGNED NOT NULL,
-              `Type` VARCHAR(10) NOT NULL,
               `NummerBestand` VARCHAR(100) NULL,
-              `MinimumScore` INT UNSIGNED NULL,
             PRIMARY KEY (`Id`));
-            CREATE UNIQUE INDEX IF NOT EXISTS `Id_UNIQUE` ON Level(Id);
+            CREATE TABLE IF NOT EXISTS `Oefenlevel` (
+              `Id` INT UNSIGNED NOT NULL,
+              `Naam` VARCHAR(50) NOT NULL,
+              `LetterOpties` VARCHAR(2000) NOT NULL,
+            PRIMARY KEY (`Id`));
+            CREATE UNIQUE INDEX IF NOT EXISTS `Id_Standaardlevel_UNIQUE` ON Standaardlevel(Id);
+            CREATE UNIQUE INDEX IF NOT EXISTS `Id_Oefenlevel_UNIQUE` ON Oefenlevel(Id);
             ";
             await cmd.ExecuteNonQueryAsync();
         }
