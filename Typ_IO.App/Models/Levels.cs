@@ -8,7 +8,7 @@ namespace BasisJaar2.Models;
 
 public class Level
 {
-    public int Nummer { get; set; }
+    public string Nummer { get; set; }
     public string Naam { get; set; }
     public string Beschrijving { get; set; }
 

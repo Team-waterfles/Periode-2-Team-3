@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="BasisJaar2.Views.LevelSelectie"
+    x:Name="Root"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <VerticalStackLayout Padding="20" Spacing="20">
+
+        <!-- Titel -->
+        <Label Text="Kies een level"
+               FontSize="28"
+               FontAttributes="Bold"
+               HorizontalOptions="Center" />
+
+        <!-- Levels -->
+        <CollectionView ItemsSource="{Binding Levels}"
+                        SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Padding="15"
+                           Margin="0,10"
+                           CornerRadius="15"
+                           BackgroundColor="#F2F2F2"
+                           HasShadow="True">
+
+                        <VerticalStackLayout Spacing="5">
+
+                            <Label Text="{Binding Naam}"
+                                   FontSize="20"
+                                   FontAttributes="Bold" />
+
+                            <Label Text="{Binding Beschrijving}"
+                                   FontSize="14"
+                                   TextColor="Gray" />
+
+                            <Button Text="Start"
+                                    Command="{Binding BindingContext.StartLevelCommand, Source={x:Reference Root}}"
+                                    CommandParameter="{Binding}" />
+
+                        </VerticalStackLayout>
+
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Terugknop -->
+        <Button Text="Terug"
+                BackgroundColor="#DD4444"
+                TextColor="White"
+                Clicked="OnTerugClicked" />
+
+    </VerticalStackLayout>
+</ContentView>

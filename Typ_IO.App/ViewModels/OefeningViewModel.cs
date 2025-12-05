@@ -5,6 +5,7 @@ using System.Diagnostics;
 using Microsoft.Maui.Dispatching;
 using Microsoft.Maui.Controls;
 using BasisJaar2.Models;
+using BasisJaar2.Views;
 
 namespace BasisJaar2.ViewModels
 {
@@ -261,7 +262,8 @@ namespace BasisJaar2.ViewModels
             Started = false;
 
             if (MainPageViewModel.Current != null)
-                MainPageViewModel.Current.SubpageContent = new Views.MoeilijkheidsgraadPage();
+                MainPageViewModel.Current.SubpageContent = new Views.LevelSelectie("makkelijk");
+
         }
 
         private void StopOefening()

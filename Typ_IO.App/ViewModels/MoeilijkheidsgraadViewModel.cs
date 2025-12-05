@@ -26,7 +26,7 @@ namespace BasisJaar2.ViewModels
         {
             if (MainPageViewModel.Current != null)
             {
-                MainPageViewModel.Current.SubpageContent = new Oefening("Easy");
+                MainPageViewModel.Current.SubpageContent = new LevelSelectie("makkelijk");
             }
         }
 
@@ -34,7 +34,7 @@ namespace BasisJaar2.ViewModels
         {
             if (MainPageViewModel.Current != null)
             {
-                MainPageViewModel.Current.SubpageContent = new Oefening("Medium");
+                MainPageViewModel.Current.SubpageContent = new LevelSelectie("gemiddeld");
             }
         }
 
@@ -42,7 +42,7 @@ namespace BasisJaar2.ViewModels
         {
             if (MainPageViewModel.Current != null)
             {
-                MainPageViewModel.Current.SubpageContent = new Oefening("Hard");
+                MainPageViewModel.Current.SubpageContent = new LevelSelectie("moeilijk");
             }
         }
 
