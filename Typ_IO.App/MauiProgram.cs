@@ -56,33 +56,40 @@ namespace BasisJaar2
         }
         private static async Task SeedAsync(IServiceProvider sp)
         {
-            var standaardlevels = sp.GetRequiredService<IStandaardlevelRepository>();
-            var oefenlevels = sp.GetRequiredService<IOefenlevelRepository>();
+            var standaardlevelrepository = sp.GetRequiredService<IStandaardlevelRepository>();
+            var oefenlevelrepository = sp.GetRequiredService<IOefenlevelRepository>();
 
-            if ((await standaardlevels.ListAsync()).Count == 0)
+            if ((await standaardlevelrepository.ListAsync()).Count == 0)
             {
-                Standaardlevel[] standaardlevelmodellen = [
+                Standaardlevel[] standaardlevels = [
                     new Standaardlevel {Moeilijkheidsgraad = 1, Naam = "Testlevel1", Tekst = "Pa's wijze lynx bezag vroom het fikse aquaduct" },
                     new Standaardlevel {Moeilijkheidsgraad = 1, Naam = "Testlevel2", Tekst = "Typ deze zin zorgvuldig om je snelheid te testen" },
                     new Standaardlevel {Moeilijkheidsgraad = 1, Naam = "Testlevel3", Tekst = "Dit is een moeilijkere oefening voor gevorderde typers" },
                     new Standaardlevel {Moeilijkheidsgraad = 1, Naam = "Woordenlijst", Tekst = "Hallo wereld auto fiets computer toetsenbord oefen typen leren school student programmeren muziek ritme spelen piano gitaar drums zingen Nederland Amsterdam Rotterdam Utrecht Groningen" },
                     new Standaardlevel {Moeilijkheidsgraad = 2, Naam = "Simpele tekst", Tekst = "De kat zit op de mat. De hond rent door het park. Typen leren is leuk en nuttig voor iedereen. Muziek en ritme helpen bij het oefenen. Practice makes perfect, dus blijf oefenen!" },
                     new Standaardlevel {Moeilijkheidsgraad = 3, Naam = "Geavanceerde tekst", Tekst = "Dit is een uitgebreide typoefening voor gevorderde gebruikers. Typen is een belangrijke vaardigheid in de moderne wereld. Of je nu student bent, professional of hobbyist, goede typvaardigheden maken je werk een stuk efficiënter. Door regelmatig te oefenen met verschillende soorten teksten, verbeter je niet alleen je snelheid maar ook je nauwkeurigheid. Muziek en ritme kunnen helpen om je typritme te verbeteren en het oefenen aangenamer te maken." }];
-                foreach (Standaardlevel level in standaardlevelmodellen)
+                
+                foreach (Standaardlevel level in standaardlevels)
                 {
-                    await standaardlevels.AddAsync(level);
+                    await standaardlevelrepository.AddAsync(level);
                 }
                 
             }
 
-            if ((await oefenlevels.ListAsync()).Count == 0)
+            if ((await oefenlevelrepository.ListAsync()).Count == 0)
             {
-                var level = new Oefenlevel
+                Oefenlevel[] oefenlevels = [
+                    new Oefenlevel {Naam = "2 vingers", Letteropties = " fj" },
+                    new Oefenlevel {Naam = "4 vingers", Letteropties = " fjdke" },
+                    new Oefenlevel {Naam = "6 vingers", Letteropties = " fjdkewslo" },
+                    new Oefenlevel {Naam = "8 vingers", Letteropties = " ;fjdkewsloa" },
+                    new Oefenlevel {Naam = "letters bovenste rij", Letteropties = " qwertyuiop" },
+                    new Oefenlevel {Naam = "10 vingers", Letteropties = " ;qwertyuiopasdfghjklzxcvbnm" }];
+
+                foreach (Oefenlevel level in oefenlevels)
                 {
-                    Naam = "2 vingers",
-                    Letteropties = "fj "
-                };
-                await oefenlevels.AddAsync(level);
+                    await oefenlevelrepository.AddAsync(level);
+                }
             }
         }
     }
