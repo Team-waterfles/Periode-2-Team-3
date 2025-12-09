@@ -61,13 +61,14 @@ namespace BasisJaar2
 
             if ((await standaardlevels.ListAsync()).Count == 0)
             {
-                var level = new Standaardlevel
+                Standaardlevel[] standaardlevelmodellen = [
+                    new Standaardlevel {Moeilijkheidsgraad = 1, Naam = "Oefenlevel", Tekst = "Pa's wijze lynx bezag vroom het fikse aquaduct" },
+                    new Standaardlevel {Moeilijkheidsgraad = 2, Naam = "Oefenlevel", Tekst = "typ deze zin zorgvuldig om je snelheid te testen" }];
+                foreach (Standaardlevel level in standaardlevelmodellen)
                 {
-                    Naam = "Oefenlevel",
-                    Tekst = "Pa's wijze lynx bezag vroom het fikse aquaduct",
-                    Moeilijkheidsgraad = 1
-                };
-                await standaardlevels.AddAsync(level);
+                    await standaardlevels.AddAsync(level);
+                }
+                
             }
 
             if ((await oefenlevels.ListAsync()).Count == 0)
