@@ -1,0 +1,117 @@
+﻿<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:BasisJaar2.ViewModels"
+             x:Class="BasisJaar2.Views.StartScreen"
+             x:DataType="vm:StartScreenViewModel">
+
+    <!-- Stack layout with spacing between buttons -->
+    <VerticalStackLayout VerticalOptions="Center"
+                         HorizontalOptions="Center"
+                         Spacing="20">
+        
+        <!-- Play Button -->
+        <Border WidthRequest="180"
+        StrokeThickness="0"
+        Background="#061f4f"
+        StrokeShape="RoundRectangle 20"
+        HorizontalOptions="Center">
+
+            <Grid ColumnDefinitions="Auto, *, Auto" Padding="10,5">
+
+                <!-- Left icon -->
+                <Image Source="play.png"
+               Grid.Column="0"
+               HeightRequest="32"
+               WidthRequest="32"
+               VerticalOptions="Center" />
+
+                <!-- Center text -->
+                <Label Text="Play"
+               Grid.Column="1"
+               TextColor="White"
+               FontSize="24"
+               VerticalOptions="Center"
+               HorizontalTextAlignment="Center" />
+
+                <!-- Right invisible spacer -->
+                <BoxView Grid.Column="2" WidthRequest="32" Opacity="0"/>
+            </Grid>
+
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding PlayCommand}" />
+            </Border.GestureRecognizers>
+        </Border>
+
+
+
+        <!-- Practice Button -->
+        <Border WidthRequest="180"
+        StrokeThickness="0"
+        Background="#061f4f"
+        StrokeShape="RoundRectangle 20"
+        HorizontalOptions="Center">
+
+            <Grid ColumnDefinitions="Auto, *, Auto" Padding="10,5">
+
+                <!-- Left icon -->
+                <Image Source="play.png"
+               Grid.Column="0"
+               HeightRequest="32"
+               WidthRequest="32"
+               VerticalOptions="Center" />
+
+                <!-- Center text -->
+                <Label Text="Practice"
+               Grid.Column="1"
+               TextColor="White"
+               FontSize="24"
+               VerticalOptions="Center"
+               HorizontalTextAlignment="Center" />
+
+                <!-- Right invisible spacer -->
+                <BoxView Grid.Column="2" WidthRequest="32" Opacity="0"/>
+            </Grid>
+
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding PracticeCommand}" />
+            </Border.GestureRecognizers>
+        </Border>
+
+
+
+        <!-- Exit Button -->
+        <Border WidthRequest="180"
+        StrokeThickness="0"
+        Background="#061f4f"
+        StrokeShape="RoundRectangle 20"
+        HorizontalOptions="Center">
+
+            <Grid ColumnDefinitions="Auto, *, Auto" Padding="10,5">
+
+                <!-- Left icon -->
+                <Image Source="exit.png"
+               Grid.Column="0"
+               HeightRequest="32"
+               WidthRequest="32"
+               VerticalOptions="Center" />
+
+                <!-- Center text -->
+                <Label Text="Exit"
+               Grid.Column="1"
+               TextColor="White"
+               FontSize="24"
+               VerticalOptions="Center"
+               HorizontalTextAlignment="Center" />
+
+                <!-- Right invisible spacer -->
+                <BoxView Grid.Column="2" WidthRequest="32" Opacity="0"/>
+            </Grid>
+
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding ExitCommand}" />
+            </Border.GestureRecognizers>
+        </Border>
+
+
+    </VerticalStackLayout>
+</ContentView>

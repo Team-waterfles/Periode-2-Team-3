@@ -1,17 +1,13 @@
+using BasisJaar2.Views;
+using Microsoft.Maui.Controls;
+
 namespace BasisJaar2.Views;
 
 public partial class MyMainPage : ContentPage
 {
-	public MyMainPage()
-	{
-		InitializeComponent();
-    }
-    void OnPage1Clicked(object sender, EventArgs e)
+    public MyMainPage()
     {
-        Subpage.Content = new Page1();
-    }
-    void OnPage2Clicked(object sender, EventArgs e)
-    {
-        Subpage.Content = new Page2();
+        InitializeComponent();
+        BindingContext = new ViewModels.MainPageViewModel();
     }
 }
