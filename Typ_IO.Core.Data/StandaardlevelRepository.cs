@@ -64,6 +64,28 @@ namespace Typ_IO.Core.Data
             return list;
         }
 
+        public async Task<List<Standaardlevel>> ListByDifficltyAsync(int moeilijkheidsgraad, CancellationToken ct = default)
+        {
+            using var conn = await _factory.CreateOpenConnectionAsync();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = $"SELECT Id, Naam, Tekst, Moeilijkheidsgraad FROM Standaardlevel WHERE Moeilijkheidsgraad = {moeilijkheidsgraad} ORDER BY Naam;";
+            using var reader = await cmd.ExecuteReaderAsync(ct);
+
+            var list = new List<Standaardlevel>();
+            while (await reader.ReadAsync(ct))
+            {
+                var level = new Standaardlevel
+                {
+                    Naam = reader.GetString(1),
+                    Tekst = reader.GetString(2),
+                    Moeilijkheidsgraad = reader.GetInt32(3)
+                };
+                level.GetType().GetProperty("Id")?.SetValue(level, reader.GetInt32(0));
+                list.Add(level);
+            }
+            return list;
+        }
+
         public async Task UpdateAsync(Standaardlevel level, CancellationToken ct = default)
         {
             using var conn = await _factory.CreateOpenConnectionAsync();
