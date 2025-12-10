@@ -6,6 +6,16 @@
 
     <StackLayout>
 
+        <!-- Terugknop linksboven -->
+        <Button Text="? Terug"
+                BackgroundColor="Transparent"
+                TextColor="Black"
+                FontSize="16"
+                HorizontalOptions="Start"
+                Clicked="OnTerugClicked"
+                Padding="5"
+                Margin="10,10,0,0"/>
+
         <!-- Tab buttons -->
         <Grid ColumnSpacing="0">
             <Grid.ColumnDefinitions>

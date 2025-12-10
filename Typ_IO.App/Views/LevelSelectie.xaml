@@ -7,6 +7,16 @@
 
     <VerticalStackLayout Padding="20" Spacing="20">
 
+        <!-- Terugknop linksboven -->
+        <Button Text="← Terug"
+                BackgroundColor="Transparent"
+                TextColor="Black"
+                FontSize="16"
+                HorizontalOptions="Start"
+                Clicked="OnTerugClicked"
+                Padding="5"
+                Margin="0,0,0,10"/>
+
         <!-- Titel -->
         <Label Text="Kies een level"
                FontSize="28"
@@ -44,12 +54,6 @@
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-
-        <!-- Terugknop -->
-        <Button Text="Terug"
-                BackgroundColor="#DD4444"
-                TextColor="White"
-                Clicked="OnTerugClicked" />
 
     </VerticalStackLayout>
 </ContentView>

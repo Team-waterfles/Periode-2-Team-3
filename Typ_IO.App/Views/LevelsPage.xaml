@@ -12,6 +12,14 @@
 
     <VerticalStackLayout Padding="20" Spacing="15">
 
+        <Button Text="← Terug"
+                BackgroundColor="Transparent"
+                TextColor="Black"
+                FontSize="16"
+                HorizontalOptions="Start"
+                Clicked="OnTerugClicked"
+                Padding="5"/>
+
         <Label Text="Kies een level"
                FontSize="28"
                FontAttributes="Bold"
