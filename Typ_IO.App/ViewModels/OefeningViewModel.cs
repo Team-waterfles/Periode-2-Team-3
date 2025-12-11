@@ -28,7 +28,7 @@ namespace BasisJaar2.ViewModels
         }
 
         public string VoorbeeldTekst { get; }
-        public string LevelKey { get; }
+        public int LevelId { get; }
 
         public bool PracticeModeHints { get; set; } = false;
 
@@ -75,7 +75,7 @@ namespace BasisJaar2.ViewModels
         {
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
             VoorbeeldTekst = level.Tekst;
-            LevelKey = level.Naam;
+            LevelId = level.Id;
 
             _stopwatch = new Stopwatch();
             Invoer = string.Empty;
@@ -297,10 +297,7 @@ namespace BasisJaar2.ViewModels
 
             if (levelGehaald)
             {
-                if (int.TryParse(LevelKey, out int lvl))
-                {
-                    PracticeSession.MarkLevelGehaald(lvl);
-                }
+                PracticeSession.MarkLevelGehaald(LevelId);
                 ResultaatTekst += "\nLevel gehaald!";
             }
             else
