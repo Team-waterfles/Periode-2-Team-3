@@ -12,7 +12,7 @@ namespace BasisJaar2.Views
     {
         private readonly ContentView _previousPage;
 
-        public Oefening(Level level, string source = "play", ContentView previousPage = null)
+        public Oefening(Level level, ContentView previousPage = null)
         {
             InitializeComponent();
 

@@ -45,13 +45,13 @@ public class LevelsViewModel : BindableObject
         }
 
         // Zet geselecteerd level
-        PracticeSession.GeselecteerdLevel = new Level { Id = 1, Naam = level.Naam, Beschrijving = "Geen beschrijving" };
+        PracticeSession.GeselecteerdLevel = new Level { Id = level.Id, Naam = level.Naam, Beschrijving = "Geen beschrijving" };
 
         if (MainPageViewModel.Current != null)
         {
             var currentPage = MainPageViewModel.Current.SubpageContent;
             MainPageViewModel.Current.SubpageContent =
-                new Oefening(PracticeSession.GeselecteerdLevel, "play", currentPage);
+                new Oefening(PracticeSession.GeselecteerdLevel, currentPage);
         }
     }
 }

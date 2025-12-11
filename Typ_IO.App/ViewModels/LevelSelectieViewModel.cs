@@ -45,7 +45,7 @@ namespace BasisJaar2.ViewModels
             {
                 var currentPage = MainPageViewModel.Current.SubpageContent;
                 MainPageViewModel.Current.SubpageContent =
-                    new Oefening(PracticeSession.GeselecteerdLevel, "play", currentPage);
+                    new Oefening(PracticeSession.GeselecteerdLevel, currentPage);
             }
         }
     }
