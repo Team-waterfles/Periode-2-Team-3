@@ -45,7 +45,7 @@ public class LevelsViewModel : BindableObject
         }
 
         // Zet geselecteerd level
-        PracticeSession.GeselecteerdLevel = new Level { Id = level.Id, Naam = level.Naam, Beschrijving = "Geen beschrijving" };
+        PracticeSession.GeselecteerdLevel = new Level { Id = level.Id, Naam = level.Naam, Tekst = level.Letteropties, Beschrijving = "Geen beschrijving" };
 
         if (MainPageViewModel.Current != null)
         {
