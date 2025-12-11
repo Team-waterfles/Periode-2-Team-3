@@ -71,7 +71,7 @@ namespace BasisJaar2.ViewModels
         { ' ', "Spatiebalk (duim)" }
     };
 
-        public OefeningViewModel(IDispatcher dispatcher, Standaardlevel level)
+        public OefeningViewModel(IDispatcher dispatcher, Level level)
         {
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
             VoorbeeldTekst = level.Tekst;

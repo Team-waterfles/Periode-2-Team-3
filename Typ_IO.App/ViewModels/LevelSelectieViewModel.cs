@@ -20,7 +20,7 @@ namespace BasisJaar2.ViewModels
             _difficulty = difficulty;
             _levelrepository = Application.Current.Windows[0].Page.Handler.MauiContext.Services.GetService<IStandaardlevelRepository>();
             LoadLevels();
-            StartLevelCommand = new Command<Level>(OnStartLevel);
+            StartLevelCommand = new Command<Standaardlevel>(OnStartLevel);
         }
 
         private async void LoadLevels()
@@ -38,14 +38,14 @@ namespace BasisJaar2.ViewModels
             if (level == null) return;
 
             // Sla het geselecteerde level op
-            PracticeSession.GeselecteerdLevel = level;
+            PracticeSession.GeselecteerdLevel = new Level {Id = 0, Naam = level.Naam, Beschrijving = "Geen beschrijving", Tekst = level.Tekst };
 
             // Navigeer naar oefening
             if (MainPageViewModel.Current != null)
             {
                 var currentPage = MainPageViewModel.Current.SubpageContent;
                 MainPageViewModel.Current.SubpageContent =
-                    new Oefening(level, "play", currentPage);
+                    new Oefening(PracticeSession.GeselecteerdLevel, "play", currentPage);
             }
         }
     }
