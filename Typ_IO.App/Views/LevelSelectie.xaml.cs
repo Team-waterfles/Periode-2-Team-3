@@ -4,13 +4,13 @@ namespace BasisJaar2.Views;
 
 public partial class LevelSelectie : ContentView
 {
-    public string Difficulty { get; }
+    public int Difficulty { get; }
 
-    public LevelSelectie(string difficulty)
+    public LevelSelectie(int difficulty)
     {
         InitializeComponent();
 
-        Difficulty = difficulty?.ToLower() ?? "makkelijk";
+        Difficulty = difficulty;
 
         BindingContext = new LevelSelectieViewModel(Difficulty);
     }

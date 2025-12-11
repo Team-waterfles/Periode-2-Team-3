@@ -44,7 +44,7 @@ namespace Typ_IO.Core.Data
         {
             using var conn = await _factory.CreateOpenConnectionAsync();
             using var cmd = conn.CreateCommand();
-            cmd.CommandText = "SELECT Id, Naam, Letteropties FROM Oefenlevel ORDER BY Naam;";
+            cmd.CommandText = "SELECT Id, Naam, Letteropties FROM Oefenlevel ORDER BY Id;";
             using var reader = await cmd.ExecuteReaderAsync(ct);
 
             var list = new List<Oefenlevel>();

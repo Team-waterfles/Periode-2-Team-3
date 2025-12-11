@@ -6,6 +6,7 @@ using Microsoft.Maui.Dispatching;
 using Microsoft.Maui.Controls;
 using BasisJaar2.Models;
 using BasisJaar2.Views;
+using Typ_IO.Core.Models;
 
 namespace BasisJaar2.ViewModels
 {
@@ -27,7 +28,7 @@ namespace BasisJaar2.ViewModels
         }
 
         public string VoorbeeldTekst { get; }
-        public string LevelKey { get; }
+        public int LevelId { get; }
 
         public bool PracticeModeHints { get; set; } = false;
 
@@ -70,11 +71,11 @@ namespace BasisJaar2.ViewModels
         { ' ', "Spatiebalk (duim)" }
     };
 
-        public OefeningViewModel(IDispatcher dispatcher, string voorbeeldTekst, string levelKey)
+        public OefeningViewModel(IDispatcher dispatcher, Level level)
         {
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
-            VoorbeeldTekst = voorbeeldTekst ?? string.Empty;
-            LevelKey = levelKey ?? string.Empty;
+            VoorbeeldTekst = level.Tekst;
+            LevelId = level.Id;
 
             _stopwatch = new Stopwatch();
             Invoer = string.Empty;
@@ -262,7 +263,7 @@ namespace BasisJaar2.ViewModels
             Started = false;
 
             if (MainPageViewModel.Current != null)
-                MainPageViewModel.Current.SubpageContent = new Views.LevelSelectie("makkelijk");
+                MainPageViewModel.Current.SubpageContent = new Views.LevelSelectie(1);
 
         }
 
@@ -296,10 +297,7 @@ namespace BasisJaar2.ViewModels
 
             if (levelGehaald)
             {
-                if (int.TryParse(LevelKey, out int lvl))
-                {
-                    PracticeSession.MarkLevelGehaald(lvl);
-                }
+                PracticeSession.MarkLevelGehaald(LevelId);
                 ResultaatTekst += "\nLevel gehaald!";
             }
             else
