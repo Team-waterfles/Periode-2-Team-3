@@ -7,13 +7,22 @@
         <VerticalStackLayout Padding="20" Spacing="20">
 
             <!-- Terugknop linksboven -->
-            <Button Text="← Terug"
-                    BackgroundColor="Transparent"
-                    TextColor="Black"
-                    FontSize="16"
+            <Border StrokeThickness="0"
+                    Background="#061f4f"
+                    StrokeShape="RoundRectangle 10"
+                    WidthRequest="100"
+                    HeightRequest="40"
                     HorizontalOptions="Start"
-                    Clicked="Terug_Clicked"
-                    Padding="5"/>
+                    Margin="0,0,0,5">
+                <Label Text="Terug"
+                       TextColor="White"
+                       FontSize="16"
+                       VerticalOptions="Center"
+                       HorizontalOptions="Center" />
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="Terug_Clicked" />
+                </Border.GestureRecognizers>
+            </Border>
 
             <!-- Titel -->
             <Label Text="Typ Oefening" FontSize="32" FontAttributes="Bold" HorizontalOptions="Center" />

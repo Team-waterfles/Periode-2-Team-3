@@ -7,14 +7,22 @@
     <StackLayout>
 
         <!-- Terugknop linksboven -->
-        <Button Text="? Terug"
-                BackgroundColor="Transparent"
-                TextColor="Black"
-                FontSize="16"
+        <Border StrokeThickness="0"
+                Background="#061f4f"
+                StrokeShape="RoundRectangle 10"
+                WidthRequest="100"
+                HeightRequest="40"
                 HorizontalOptions="Start"
-                Clicked="OnTerugClicked"
-                Padding="5"
-                Margin="10,10,0,0"/>
+                Margin="10,10,0,10">
+            <Label Text="Terug"
+                   TextColor="White"
+                   FontSize="16"
+                   VerticalOptions="Center"
+                   HorizontalOptions="Center" />
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnTerugClicked" />
+            </Border.GestureRecognizers>
+        </Border>
 
         <!-- Tab buttons -->
         <Grid ColumnSpacing="0">
