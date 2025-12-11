@@ -64,7 +64,7 @@ namespace Typ_IO.Core.Data
             return list;
         }
 
-        public async Task<List<Standaardlevel>> ListByDifficltyAsync(int moeilijkheidsgraad, CancellationToken ct = default)
+        public async Task<List<Standaardlevel>> ListByDifficultyAsync(int moeilijkheidsgraad, CancellationToken ct = default)
         {
             using var conn = await _factory.CreateOpenConnectionAsync();
             using var cmd = conn.CreateCommand();

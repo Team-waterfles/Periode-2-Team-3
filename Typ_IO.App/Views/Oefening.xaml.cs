@@ -3,12 +3,12 @@ using Microsoft.Maui.Controls;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Typ_IO.Core.Models;
 
 namespace BasisJaar2.Views
 {
     public partial class Oefening : ContentView
     {
-        private readonly string _levelKey;
         private readonly ContentView _previousPage;
 
     public static readonly Dictionary<string, string> Voorbeelden = new()
@@ -29,18 +29,15 @@ namespace BasisJaar2.Views
         { "level5", "Dit is een uitgebreide typoefening voor gevorderde gebruikers. Typen is een belangrijke vaardigheid in de moderne wereld. Of je nu student bent, professional of hobbyist, goede typvaardigheden maken je werk een stuk efficiënter. Door regelmatig te oefenen met verschillende soorten teksten, verbeter je niet alleen je snelheid maar ook je nauwkeurigheid. Muziek en ritme kunnen helpen om je typritme te verbeteren en het oefenen aangenamer te maken."}
     };
 
-        public Oefening(string key, string source = "play", ContentView previousPage = null)
+        public Oefening(Standaardlevel level, string source = "play", ContentView previousPage = null)
         {
             InitializeComponent();
 
             _previousPage = previousPage;
-            _levelKey = key ?? string.Empty;
 
-            string voorbeeldTekst = Voorbeelden.ContainsKey(key)
-                ? Voorbeelden[key]
-                : (source == "play" ? Voorbeelden["Easy"] : Voorbeelden["1"]);
+            string voorbeeldTekst = level.Tekst;
 
-            var vm = new OefeningViewModel(this.Dispatcher, voorbeeldTekst, _levelKey);
+            var vm = new OefeningViewModel(this.Dispatcher, level);
 
             if (_previousPage is LevelsPage)
                 vm.PracticeModeHints = true;

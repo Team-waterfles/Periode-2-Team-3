@@ -3,46 +3,37 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using BasisJaar2.Models;
 using BasisJaar2.Views;
+using Typ_IO.Core.Repositories;
+using Typ_IO.Core.Models;
 
 namespace BasisJaar2.ViewModels
 {
     public class LevelSelectieViewModel : BindableObject
     {
-        public ObservableCollection<Level> Levels { get; } = new();
+        public ObservableCollection<Standaardlevel> Levels { get; } = new();
         public ICommand StartLevelCommand { get; }
 
-        private readonly string _difficulty;
-
-        public LevelSelectieViewModel(string difficulty)
+        private readonly int _difficulty;
+        private readonly IStandaardlevelRepository _levelrepository;
+        public LevelSelectieViewModel(int difficulty)
         {
-            _difficulty = difficulty.ToLower();
+            _difficulty = difficulty;
+            _levelrepository = Application.Current.Windows[0].Page.Handler.MauiContext.Services.GetService<IStandaardlevelRepository>();
             LoadLevels();
             StartLevelCommand = new Command<Level>(OnStartLevel);
         }
 
-        private void LoadLevels()
+        private async void LoadLevels()
         {
             Levels.Clear();
 
-            switch (_difficulty)
+            foreach (var level in await _levelrepository.ListByDifficultyAsync(_difficulty))
             {
-                case "makkelijk":
-                    Levels.Add(new Level { Nummer = "level1", Naam = "Basis Letters", Beschrijving = "A, S, D, F, J, K, L" });
-                    Levels.Add(new Level { Nummer = "level2", Naam = "Uitgebreid", Beschrijving = "Meer letters en combinaties" });
-                    break;
-
-                case "gemiddeld":
-                    Levels.Add(new Level { Nummer = "level3", Naam = "Woorden", Beschrijving = "Typen van korte woorden" });
-                    Levels.Add(new Level { Nummer = "level4", Naam = "Langere woorden", Beschrijving = "Complexere combinaties" });
-                    break;
-
-                case "moeilijk":
-                    Levels.Add(new Level { Nummer = "level5", Naam = "Zinnen", Beschrijving = "Volledige zinnen oefenen" });
-                    break;
+                Levels.Add(level);
             }
         }
 
-        private void OnStartLevel(Level level)
+        private void OnStartLevel(Standaardlevel level)
         {
             if (level == null) return;
 
@@ -54,7 +45,7 @@ namespace BasisJaar2.ViewModels
             {
                 var currentPage = MainPageViewModel.Current.SubpageContent;
                 MainPageViewModel.Current.SubpageContent =
-                    new Oefening(level.Nummer.ToString(), "play", currentPage);
+                    new Oefening(level, "play", currentPage);
             }
         }
     }

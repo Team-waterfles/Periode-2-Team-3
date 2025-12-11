@@ -6,6 +6,7 @@ using Microsoft.Maui.Dispatching;
 using Microsoft.Maui.Controls;
 using BasisJaar2.Models;
 using BasisJaar2.Views;
+using Typ_IO.Core.Models;
 
 namespace BasisJaar2.ViewModels
 {
@@ -70,11 +71,11 @@ namespace BasisJaar2.ViewModels
         { ' ', "Spatiebalk (duim)" }
     };
 
-        public OefeningViewModel(IDispatcher dispatcher, string voorbeeldTekst, string levelKey)
+        public OefeningViewModel(IDispatcher dispatcher, Standaardlevel level)
         {
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
-            VoorbeeldTekst = voorbeeldTekst ?? string.Empty;
-            LevelKey = levelKey ?? string.Empty;
+            VoorbeeldTekst = level.Tekst;
+            LevelKey = level.Naam;
 
             _stopwatch = new Stopwatch();
             Invoer = string.Empty;
@@ -262,7 +263,7 @@ namespace BasisJaar2.ViewModels
             Started = false;
 
             if (MainPageViewModel.Current != null)
-                MainPageViewModel.Current.SubpageContent = new Views.LevelSelectie("makkelijk");
+                MainPageViewModel.Current.SubpageContent = new Views.LevelSelectie(1);
 
         }
 

@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using Typ_IO.Core.Models;
 
 namespace BasisJaar2.Models;
 
 public static class PracticeSession
 {
-    public static Level? GeselecteerdLevel { get; set; }
+    public static Standaardlevel? GeselecteerdLevel { get; set; }
     private static readonly HashSet<int> GehaaldeLevels = new();
 
     public static bool IsLevelUnlocked(int levelNummer)
