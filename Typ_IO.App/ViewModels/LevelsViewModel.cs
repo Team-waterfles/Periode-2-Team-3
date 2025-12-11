@@ -5,6 +5,7 @@ using BasisJaar2.Models;
 using BasisJaar2.Views;
 using Typ_IO.Core.Repositories;
 using Typ_IO.Core.Models;
+using Typ_IO.Core.Services;
 
 namespace BasisJaar2.ViewModels;
 
@@ -45,7 +46,8 @@ public class LevelsViewModel : BindableObject
         }
 
         // Zet geselecteerd level
-        PracticeSession.GeselecteerdLevel = new Level { Id = level.Id, Naam = level.Naam, Tekst = level.Letteropties, Beschrijving = "Geen beschrijving" };
+        string tekst = Levelgenerator.MaakLevelBijLetteropties(level.Letteropties, 100);
+        PracticeSession.GeselecteerdLevel = new Level { Id = level.Id, Naam = level.Naam, Tekst = tekst, Beschrijving = "Geen beschrijving" };
 
         if (MainPageViewModel.Current != null)
         {
