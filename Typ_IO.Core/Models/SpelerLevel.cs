@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace Typ_IO.Core.Models
 {
-    public class SpelerLevel(int speler_id, int level_id, int top_score)
+    public class SpelerLevel
     {
-        public int SpelerId { get; set; } = speler_id;
-        public int LevelId { get; set; } = level_id;
-        public int TopScore { get; set; } = top_score;
+        public SpelerLevel() {}
+        public int SpelerId { get; set; }
+        public int LevelId { get; set; }
+        public int TopScore { get; set; }
     }
 }

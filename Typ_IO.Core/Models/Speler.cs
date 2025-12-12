@@ -1,8 +1,9 @@
 ﻿namespace Typ_IO.Core.Models
 {
-    public class Speler(int id, string naam)
+    public class Speler
     {
-        public int Id { get; private set; } = id;
-        public string Naam { get; set; } = naam;
+        public Speler() {}
+        public int Id { get; private set; }
+        public string Naam { get; set; }
     }
 }
