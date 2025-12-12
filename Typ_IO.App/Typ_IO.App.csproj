@@ -83,6 +83,9 @@
 	  <MauiXaml Update="Views\Header.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\LevelLeaderboard.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\LevelSelectie.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
