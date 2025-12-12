@@ -12,6 +12,7 @@ namespace BasisJaar2.ViewModels
     {
         public ObservableCollection<Standaardlevel> Levels { get; } = new();
         public ICommand StartLevelCommand { get; }
+        public ICommand OpenLeaderboardCommand { get; }
 
         private readonly int _difficulty;
         private readonly IStandaardlevelRepository _levelrepository;
@@ -21,6 +22,7 @@ namespace BasisJaar2.ViewModels
             _levelrepository = Application.Current.Windows[0].Page.Handler.MauiContext.Services.GetService<IStandaardlevelRepository>();
             LoadLevels();
             StartLevelCommand = new Command<Standaardlevel>(OnStartLevel);
+            OpenLeaderboardCommand = new Command(OpenLeaderboard);
         }
 
         private async void LoadLevels()
@@ -47,6 +49,13 @@ namespace BasisJaar2.ViewModels
                 MainPageViewModel.Current.SubpageContent =
                     new Oefening(PracticeSession.GeselecteerdLevel, currentPage);
             }
+        }
+        private void OpenLeaderboard()
+        {
+            var currentPage = MainPageViewModel.Current.SubpageContent;
+            MainPageViewModel.Current.SubpageContent =
+                new LevelLeaderboard();
+
         }
     }
 }

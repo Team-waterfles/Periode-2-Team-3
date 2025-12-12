@@ -52,10 +52,14 @@
                                    FontSize="14"
                                    TextColor="Gray" />
 
-                            <Button Text="Start"
+                            <HorizontalStackLayout Spacing="5">
+                                <Button Text="Start" MinimumWidthRequest="500"
                                     Command="{Binding BindingContext.StartLevelCommand, Source={x:Reference Root}}"
                                     CommandParameter="{Binding}" />
+                                <Button Text="Leaderboard"
+                                    Command="{Binding BindingContext.OpenLeaderboardCommand, Source={x:Reference Root}}" />
 
+                            </HorizontalStackLayout>
                         </VerticalStackLayout>
 
                     </Frame>
