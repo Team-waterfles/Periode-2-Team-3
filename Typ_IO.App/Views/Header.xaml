@@ -3,10 +3,20 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="BasisJaar2.Views.Header">
     <VerticalStackLayout>
-        <Label 
-            Text="Typ.IO"
-            FontSize="36"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
+        <Border StrokeThickness="0"
+                Background="Transparent"
+                HorizontalOptions="Center"
+                Padding="10">
+            <Label 
+                Text="Typ.IO"
+                FontSize="36"
+                FontAttributes="Bold"
+                TextColor="#061f4f"
+                VerticalOptions="Center" 
+                HorizontalOptions="Center" />
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnHomeClicked" />
+            </Border.GestureRecognizers>
+        </Border>
     </VerticalStackLayout>
 </ContentView>
