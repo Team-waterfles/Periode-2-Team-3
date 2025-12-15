@@ -9,7 +9,7 @@ using Typ_IO.Core.Models;
 namespace BasisJaar2.ViewModels;
 public partial class LevelLeaderboardViewModel : BindableObject
 {
-    public ObservableCollection<SpelerLevel> SpelerLevel;
+    public ObservableCollection<LevelLeaderboard> LevelLeaderboard;
     public LevelLeaderboardViewModel(Standaardlevel level)
 	{
         // In: Levelid

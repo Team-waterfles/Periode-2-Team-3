@@ -2,6 +2,6 @@
 
 namespace Typ_IO.Core.Repositories
 {
-    public interface ISpelerLevelRepository : IRepository<SpelerLevel>
+    public interface ISpelerRepository : IRepository<Speler>
     {}
 }
