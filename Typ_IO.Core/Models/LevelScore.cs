@@ -10,7 +10,6 @@ namespace Typ_IO.Core.Models
     {
         public LevelScore() {}
         public int SpelerId { get; set; }
-        public int Positie { get; set; }
         public int TopScore { get; set; }
     }
 }

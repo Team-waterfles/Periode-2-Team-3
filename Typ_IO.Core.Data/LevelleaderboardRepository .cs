@@ -38,9 +38,26 @@ namespace Typ_IO.Core.Data
             cmd.Parameters.AddWithValue("$speler_id", speler_level.SpelerId);
             await cmd.ExecuteNonQueryAsync(ct);
         }
-        public async Task<List<LevelScore>> GetLeaderboardAsync(int level_id, CancellationToken ct = default)
+        public async Task<List<SpelerLevel>> GetLeaderboardAsync(int level_id, CancellationToken ct = default)
         {
-            throw new NotImplementedException();
+            using var conn = await _factory.CreateOpenConnectionAsync();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "SELECT S.Naam, SL.Topscore FROM Speler S JOIN SpelerLevel SL on S.Id = SL.SpelerId WHERE SL.LevelId = $level_id ORDER BY SL.Topscore;";
+            cmd.Parameters.AddWithValue("$level_id", level_id);
+            using var reader = await cmd.ExecuteReaderAsync(ct);
+
+            var list = new List<SpelerLevel>();
+            while (await reader.ReadAsync(ct))
+            {
+                var speler_level = new SpelerLevel
+                {
+                    TopScore = reader.GetInt32(2)
+                };
+                speler_level.GetType().GetProperty("LevelId")?.SetValue(speler_level, reader.GetInt32(0));
+                speler_level.GetType().GetProperty("SpelerId")?.SetValue(speler_level, reader.GetInt32(1));
+                list.Add(speler_level);
+            }
+            return list;
         }
 
         public Task SaveChangesAsync(CancellationToken ct = default) => Task.CompletedTask;
