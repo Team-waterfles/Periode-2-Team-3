@@ -3,12 +3,24 @@ using Typ_IO.Core.Models;
 
 namespace Typ_IO.Core.Data
 {
-    public class LeaderboardRepository: ILeaderboardRepository
+    public class LeaderboardRepository: ILevelleaderboardRepository
     {
         private readonly ISqliteConnectionFactory _factory;
         public LeaderboardRepository(ISqliteConnectionFactory factory) => _factory = factory;
 
-        public async Task<List<LevelScore>> GetLevelleaderboardAsync(int level_id, CancellationToken ct = default)
+        public async Task AddAsync(LevelScore score, CancellationToken ct = default)
+        {
+            throw new NotImplementedException();
+        }
+        public async Task UpdateAsync(LevelScore score, CancellationToken ct = default)
+        {
+            throw new NotImplementedException();
+        }
+        public async Task DeleteAsync(LevelScore score, CancellationToken ct = default)
+        {
+            throw new NotImplementedException();
+        }
+        public async Task<List<LevelScore>> GetLeaderboardAsync(int level_id, CancellationToken ct = default)
         {
             throw new NotImplementedException();
         }
