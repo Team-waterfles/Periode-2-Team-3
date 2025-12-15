@@ -39,6 +39,13 @@ namespace BasisJaar2.ViewModels
             set { _huidigeHint = value; OnPropertyChanged(nameof(HuidigeHint)); }
         }
 
+        private FormattedString _formattedVoorbeeldTekst;
+        public FormattedString FormattedVoorbeeldTekst
+        {
+            get => _formattedVoorbeeldTekst;
+            set { _formattedVoorbeeldTekst = value; OnPropertyChanged(nameof(FormattedVoorbeeldTekst)); }
+        }
+
         private readonly Dictionary<char, string> _vingerHints = new()
     {
         { 'f', "Linker wijsvinger (F)" }, { 'F', "Linker wijsvinger (F)" },
@@ -184,25 +191,44 @@ namespace BasisJaar2.ViewModels
 
         private void UpdateFormattedInvoer()
         {
-            var fs = new FormattedString();
-            for (int i = 0; i < Invoer.Length; i++)
+            var invoerFs = new FormattedString();
+            var voorbeeldFs = new FormattedString();
+
+            for (int i = 0; i < VoorbeeldTekst.Length; i++)
             {
-                var span = new Span();
-                if (i == _firstErrorIndex)
+                // ===== VOORBEELDTEKST =====
+                var voorbeeldSpan = new Span
                 {
-                    span.Text = Invoer[i] == ' ' ? "_" : Invoer[i].ToString();
-                    span.TextColor = Colors.Red;
-                }
-                else
+                    Text = VoorbeeldTekst[i].ToString(),
+                    TextColor = Colors.Black
+                };
+
+                if (i < Invoer.Length)
                 {
-                    span.Text = Invoer[i].ToString();
-                    span.TextColor = Colors.Black;
+                    if (_firstErrorIndex == i)
+                        voorbeeldSpan.TextColor = Colors.Red;
+                    else
+                        voorbeeldSpan.TextColor = Colors.Gray;
                 }
-                fs.Spans.Add(span);
+
+                voorbeeldFs.Spans.Add(voorbeeldSpan);
+
+                // ===== INVOER =====
+                if (i < Invoer.Length)
+                {
+                    var invoerSpan = new Span
+                    {
+                        Text = Invoer[i] == ' ' ? "_" : Invoer[i].ToString(),
+                        TextColor = (i == _firstErrorIndex) ? Colors.Red : Colors.Black
+                    };
+                    invoerFs.Spans.Add(invoerSpan);
+                }
             }
 
-            FormattedInvoer = fs;
+            FormattedVoorbeeldTekst = voorbeeldFs;
+            FormattedInvoer = invoerFs;
         }
+
 
         private void UpdateHint()
         {

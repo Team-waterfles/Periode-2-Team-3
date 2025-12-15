@@ -34,9 +34,16 @@
                 <Label Text="{Binding AantalKarakters}" FontSize="24" FontAttributes="Bold" TextColor="Blue" />
             </HorizontalStackLayout>
             <!-- Voorbeeldtekst -->
-            <Frame BorderColor="Black" CornerRadius="10" Padding="15" BackgroundColor="White">
-                <Label Text="{Binding VoorbeeldTekst}" FontSize="18" FontFamily="CourierNew" TextColor="Black" LineBreakMode="WordWrap" />
+            <Frame BorderColor="Black"
+                CornerRadius="10"
+                Padding="15"
+                BackgroundColor="White">
+                <Label FormattedText="{Binding FormattedVoorbeeldTekst}"
+                    FontSize="18"
+                    FontFamily="CourierNew"
+                    LineBreakMode="WordWrap" />
             </Frame>
+
             <!-- Hints zichtbaar alleen als PracticeModeHints true -->
             <Frame IsVisible="{Binding PracticeModeHints}" BackgroundColor="LightYellow" Padding="10" CornerRadius="5" BorderColor="Orange">
                 <Label Text="{Binding HuidigeHint}" FontSize="16" TextColor="DarkOrange" HorizontalOptions="Center" />
