@@ -9,8 +9,11 @@ using Typ_IO.Core.Models;
 namespace BasisJaar2.ViewModels;
 public partial class LevelLeaderboardViewModel : BindableObject
 {
-    public ObservableCollection<int> LevelScores;
-    public LevelLeaderboardViewModel()
+    public ObservableCollection<SpelerLevel> SpelerLevel;
+    public LevelLeaderboardViewModel(Standaardlevel level)
 	{
+        // In: Levelid
+        // Haal relevante data op uit SpelerLevel
+        // Maak scorebord
 	}
 }
