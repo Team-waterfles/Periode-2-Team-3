@@ -42,7 +42,7 @@ namespace Typ_IO.Core.Data
         {
             using var conn = await _factory.CreateOpenConnectionAsync();
             using var cmd = conn.CreateCommand();
-            cmd.CommandText = "SELECT S.Naam, SL.Topscore FROM Speler S JOIN SpelerLevel SL on S.Id = SL.SpelerId WHERE SL.LevelId = $level_id ORDER BY SL.Topscore;";
+            cmd.CommandText = "SELECT S.Naam, SL.Topscore FROM Speler S JOIN SpelerLevel SL on S.Id = SL.SpelerId WHERE SL.LevelId = $level_id ORDER BY SL.Topscore DESC;";
             cmd.Parameters.AddWithValue("$level_id", level_id);
             using var reader = await cmd.ExecuteReaderAsync(ct);
 
