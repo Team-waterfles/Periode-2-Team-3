@@ -119,20 +119,20 @@ namespace BasisJaar2
             if ((await levelleaderboard_repository.GetLeaderboardAsync(1)).Count == 0)
             {
                 SpelerLevel[] speler_level_lijst = [
-                    new SpelerLevel {LevelId = 0, SpelerId = 1, TopScore = 1000 },
-                    new SpelerLevel {LevelId = 0, SpelerId = 2, TopScore = 500 },
-                    new SpelerLevel {LevelId = 0, SpelerId = 3, TopScore = 300 },
-                    new SpelerLevel {LevelId = 0, SpelerId = 4, TopScore = 250 },
-                    new SpelerLevel {LevelId = 0, SpelerId = 5, TopScore = 200 },
-                    new SpelerLevel {LevelId = 0, SpelerId = 6, TopScore = 190 },
-                    new SpelerLevel {LevelId = 0, SpelerId = 7, TopScore = 190 },
-                    new SpelerLevel {LevelId = 0, SpelerId = 8, TopScore = 160 },
-                    new SpelerLevel {LevelId = 0, SpelerId = 9, TopScore = 150 },
-                    new SpelerLevel {LevelId = 1, SpelerId = 1, TopScore = 100 },
-                    new SpelerLevel {LevelId = 1, SpelerId = 2, TopScore = 999 },
-                    new SpelerLevel {LevelId = 1, SpelerId = 3, TopScore = 567 },
-                    new SpelerLevel {LevelId = 2, SpelerId = 1, TopScore = 945 },
-                    new SpelerLevel {LevelId = 2, SpelerId = 2, TopScore = 123 }];
+                    new SpelerLevel {LevelId = 1, SpelerId = 2, TopScore = 1000 },
+                    new SpelerLevel {LevelId = 1, SpelerId = 3, TopScore = 500 },
+                    new SpelerLevel {LevelId = 1, SpelerId = 4, TopScore = 300 },
+                    new SpelerLevel {LevelId = 1, SpelerId = 5, TopScore = 250 },
+                    new SpelerLevel {LevelId = 1, SpelerId = 6, TopScore = 200 },
+                    new SpelerLevel {LevelId = 1, SpelerId = 7, TopScore = 190 },
+                    new SpelerLevel {LevelId = 1, SpelerId = 8, TopScore = 190 },
+                    new SpelerLevel {LevelId = 1, SpelerId = 9, TopScore = 160 },
+                    new SpelerLevel {LevelId = 1, SpelerId = 10, TopScore = 150 },
+                    new SpelerLevel {LevelId = 2, SpelerId = 2, TopScore = 100 },
+                    new SpelerLevel {LevelId = 2, SpelerId = 3, TopScore = 999 },
+                    new SpelerLevel {LevelId = 2, SpelerId = 4, TopScore = 567 },
+                    new SpelerLevel {LevelId = 3, SpelerId = 2, TopScore = 945 },
+                    new SpelerLevel {LevelId = 3, SpelerId = 3, TopScore = 123 }];
 
                 foreach (SpelerLevel speler_level in speler_level_lijst)
                 {
