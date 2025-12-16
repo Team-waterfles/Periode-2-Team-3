@@ -25,7 +25,7 @@ public partial class LevelLeaderboardViewModel : BindableObject
         int positie = 1;
         foreach (LevelScore scoredata in leaderboarddata)
         {
-            Levelscores.Append(new LevelScore(scoredata.Naam, positie, scoredata.TopScore));
+            Levelscores.Add(new LevelScore(scoredata.Naam, positie, scoredata.TopScore));
             positie++;
         }
 	}
