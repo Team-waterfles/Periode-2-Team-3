@@ -7,6 +7,24 @@
 
     <VerticalStackLayout Padding="20" Spacing="20">
 
+        <!-- Terugknop linksboven -->
+        <Border StrokeThickness="0"
+                Background="#061f4f"
+                StrokeShape="RoundRectangle 10"
+                WidthRequest="100"
+                HeightRequest="40"
+                HorizontalOptions="Start"
+                Margin="0,0,0,10">
+            <Label Text="Terug"
+                   TextColor="White"
+                   FontSize="16"
+                   VerticalOptions="Center"
+                   HorizontalOptions="Center" />
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnTerugClicked" />
+            </Border.GestureRecognizers>
+        </Border>
+
         <!-- Titel -->
         <Label Text="Kies een level"
                FontSize="28"
@@ -44,12 +62,6 @@
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-
-        <!-- Terugknop -->
-        <Button Text="Terug"
-                BackgroundColor="#DD4444"
-                TextColor="White"
-                Clicked="OnTerugClicked" />
 
     </VerticalStackLayout>
 </ContentView>

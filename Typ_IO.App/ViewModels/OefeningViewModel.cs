@@ -6,6 +6,7 @@ using Microsoft.Maui.Dispatching;
 using Microsoft.Maui.Controls;
 using BasisJaar2.Models;
 using BasisJaar2.Views;
+using Typ_IO.Core.Models;
 
 namespace BasisJaar2.ViewModels
 {
@@ -27,7 +28,7 @@ namespace BasisJaar2.ViewModels
         }
 
         public string VoorbeeldTekst { get; }
-        public string LevelKey { get; }
+        public int LevelId { get; }
 
         public bool PracticeModeHints { get; set; } = false;
 
@@ -36,6 +37,13 @@ namespace BasisJaar2.ViewModels
         {
             get => _huidigeHint;
             set { _huidigeHint = value; OnPropertyChanged(nameof(HuidigeHint)); }
+        }
+
+        private FormattedString _formattedVoorbeeldTekst;
+        public FormattedString FormattedVoorbeeldTekst
+        {
+            get => _formattedVoorbeeldTekst;
+            set { _formattedVoorbeeldTekst = value; OnPropertyChanged(nameof(FormattedVoorbeeldTekst)); }
         }
 
         private readonly Dictionary<char, string> _vingerHints = new()
@@ -70,11 +78,11 @@ namespace BasisJaar2.ViewModels
         { ' ', "Spatiebalk (duim)" }
     };
 
-        public OefeningViewModel(IDispatcher dispatcher, string voorbeeldTekst, string levelKey)
+        public OefeningViewModel(IDispatcher dispatcher, Level level)
         {
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
-            VoorbeeldTekst = voorbeeldTekst ?? string.Empty;
-            LevelKey = levelKey ?? string.Empty;
+            VoorbeeldTekst = level.Tekst;
+            LevelId = level.Id;
 
             _stopwatch = new Stopwatch();
             Invoer = string.Empty;
@@ -183,25 +191,44 @@ namespace BasisJaar2.ViewModels
 
         private void UpdateFormattedInvoer()
         {
-            var fs = new FormattedString();
-            for (int i = 0; i < Invoer.Length; i++)
+            var invoerFs = new FormattedString();
+            var voorbeeldFs = new FormattedString();
+
+            for (int i = 0; i < VoorbeeldTekst.Length; i++)
             {
-                var span = new Span();
-                if (i == _firstErrorIndex)
+                // ===== VOORBEELDTEKST =====
+                var voorbeeldSpan = new Span
                 {
-                    span.Text = Invoer[i] == ' ' ? "_" : Invoer[i].ToString();
-                    span.TextColor = Colors.Red;
-                }
-                else
+                    Text = VoorbeeldTekst[i].ToString(),
+                    TextColor = Colors.Black
+                };
+
+                if (i < Invoer.Length)
                 {
-                    span.Text = Invoer[i].ToString();
-                    span.TextColor = Colors.Black;
+                    if (_firstErrorIndex == i)
+                        voorbeeldSpan.TextColor = Colors.Red;
+                    else
+                        voorbeeldSpan.TextColor = Colors.Gray;
                 }
-                fs.Spans.Add(span);
+
+                voorbeeldFs.Spans.Add(voorbeeldSpan);
+
+                // ===== INVOER =====
+                if (i < Invoer.Length)
+                {
+                    var invoerSpan = new Span
+                    {
+                        Text = Invoer[i] == ' ' ? "_" : Invoer[i].ToString(),
+                        TextColor = (i == _firstErrorIndex) ? Colors.Red : Colors.Black
+                    };
+                    invoerFs.Spans.Add(invoerSpan);
+                }
             }
 
-            FormattedInvoer = fs;
+            FormattedVoorbeeldTekst = voorbeeldFs;
+            FormattedInvoer = invoerFs;
         }
+
 
         private void UpdateHint()
         {
@@ -262,7 +289,7 @@ namespace BasisJaar2.ViewModels
             Started = false;
 
             if (MainPageViewModel.Current != null)
-                MainPageViewModel.Current.SubpageContent = new Views.LevelSelectie("makkelijk");
+                MainPageViewModel.Current.SubpageContent = new Views.LevelSelectie(1);
 
         }
 
@@ -296,10 +323,7 @@ namespace BasisJaar2.ViewModels
 
             if (levelGehaald)
             {
-                if (int.TryParse(LevelKey, out int lvl))
-                {
-                    PracticeSession.MarkLevelGehaald(lvl);
-                }
+                PracticeSession.MarkLevelGehaald(LevelId);
                 ResultaatTekst += "\nLevel gehaald!";
             }
             else

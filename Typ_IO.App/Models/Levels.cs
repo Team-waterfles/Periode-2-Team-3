@@ -8,9 +8,10 @@ namespace BasisJaar2.Models;
 
 public class Level
 {
-    public string Nummer { get; set; }
+    public int Id { get; set; }
     public string Naam { get; set; }
     public string Beschrijving { get; set; }
+    public string Tekst { get; set; }
 
     // Voor UI
     public bool IsUnlocked { get; set; }
