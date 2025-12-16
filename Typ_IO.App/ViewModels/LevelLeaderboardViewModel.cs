@@ -10,13 +10,11 @@ namespace BasisJaar2.ViewModels;
 public partial class LevelleaderboardViewModel : BindableObject
 {
     public ObservableCollection<LevelScore> Levelscores = [];
-    private readonly ISpelerRepository _spelerrepository;
     private readonly ILevelleaderboardRepository _leaderboardrepository;
 
     public LevelleaderboardViewModel(Standaardlevel level)
     {
         _leaderboardrepository = Application.Current.Windows[0].Page.Handler.MauiContext.Services.GetService<ILevelleaderboardRepository>();
-        _spelerrepository = Application.Current.Windows[0].Page.Handler.MauiContext.Services.GetService<ISpelerRepository>();
         GetLeaderboard(level);
     }
     public void GetLeaderboard(Standaardlevel level)
