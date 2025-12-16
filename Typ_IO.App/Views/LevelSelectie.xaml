@@ -57,7 +57,8 @@
                                     Command="{Binding BindingContext.StartLevelCommand, Source={x:Reference Root}}"
                                     CommandParameter="{Binding}" />
                                 <Button Text="Leaderboard"
-                                    Command="{Binding BindingContext.OpenLeaderboardCommand, Source={x:Reference Root}}" />
+                                    Command="{Binding BindingContext.OpenLeaderboardCommand, Source={x:Reference Root}}"
+                                    CommandParameter="{Binding}" />
 
                             </HorizontalStackLayout>
                         </VerticalStackLayout>
