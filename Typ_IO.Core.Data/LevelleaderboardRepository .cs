@@ -51,10 +51,10 @@ namespace Typ_IO.Core.Data
             {
                 var speler_level = new SpelerLevel
                 {
+                    LevelId = reader.GetInt32(0),
+                    SpelerId = reader.GetInt32(1),
                     TopScore = reader.GetInt32(2)
                 };
-                speler_level.GetType().GetProperty("LevelId")?.SetValue(speler_level, reader.GetInt32(0));
-                speler_level.GetType().GetProperty("SpelerId")?.SetValue(speler_level, reader.GetInt32(1));
                 list.Add(speler_level);
             }
             return list;

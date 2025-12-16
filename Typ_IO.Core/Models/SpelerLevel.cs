@@ -9,8 +9,8 @@ namespace Typ_IO.Core.Models
     public class SpelerLevel
     {
         public SpelerLevel() {}
-        public int LevelId { get; private set; }
-        public int SpelerId { get; private set; }
+        public int LevelId { get; set; }
+        public int SpelerId { get; set; }
         public int TopScore { get; set; }
     }
 }

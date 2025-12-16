@@ -31,6 +31,8 @@ namespace BasisJaar2
 
             builder.Services.AddScoped<IStandaardlevelRepository, StandaardlevelRepository>();
             builder.Services.AddScoped<IOefenlevelRepository, OefenlevelRepository>();
+            builder.Services.AddScoped<ISpelerRepository, SpelerRepository>();
+            builder.Services.AddScoped<ILevelleaderboardRepository, LevelleaderboardRepository>();
 
 #if DEBUG
             builder.Logging.AddDebug();
@@ -58,6 +60,8 @@ namespace BasisJaar2
         {
             var standaardlevelrepository = sp.GetRequiredService<IStandaardlevelRepository>();
             var oefenlevelrepository = sp.GetRequiredService<IOefenlevelRepository>();
+            var speler_repository = sp.GetRequiredService<ISpelerRepository>();
+            var levelleaderboard_repository = sp.GetRequiredService<ILevelleaderboardRepository>();
 
             if ((await standaardlevelrepository.ListAsync()).Count == 0)
             {
@@ -89,6 +93,50 @@ namespace BasisJaar2
                 foreach (Oefenlevel level in oefenlevels)
                 {
                     await oefenlevelrepository.AddAsync(level);
+                }
+            }
+
+            if ((await speler_repository.ListAsync()).Count == 0)
+            {
+                Speler[] spelers = [
+                    new Speler {Naam = "Jij!" },
+                    new Speler {Naam = "De beste speler" },
+                    new Speler {Naam = "Foutontwijker" },
+                    new Speler {Naam = "De Typraket" },
+                    new Speler {Naam = "Typkampioen" },
+                    new Speler {Naam = "De typpolitie" },
+                    new Speler {Naam = "Ikben200%" },
+                    new Speler {Naam = "De letterfabriek" },
+                    new Speler {Naam = "Typende typer" },
+                    new Speler {Naam = "123Typer" }];
+
+                foreach (Speler speler in spelers)
+                {
+                    await speler_repository.AddAsync(speler);
+                }
+            }
+
+            if ((await levelleaderboard_repository.GetLeaderboardAsync(1)).Count == 0)
+            {
+                SpelerLevel[] speler_level_lijst = [
+                    new SpelerLevel {LevelId = 0, SpelerId = 1, TopScore = 1000 },
+                    new SpelerLevel {LevelId = 0, SpelerId = 2, TopScore = 500 },
+                    new SpelerLevel {LevelId = 0, SpelerId = 3, TopScore = 300 },
+                    new SpelerLevel {LevelId = 0, SpelerId = 4, TopScore = 250 },
+                    new SpelerLevel {LevelId = 0, SpelerId = 5, TopScore = 200 },
+                    new SpelerLevel {LevelId = 0, SpelerId = 6, TopScore = 190 },
+                    new SpelerLevel {LevelId = 0, SpelerId = 7, TopScore = 190 },
+                    new SpelerLevel {LevelId = 0, SpelerId = 8, TopScore = 160 },
+                    new SpelerLevel {LevelId = 0, SpelerId = 9, TopScore = 150 },
+                    new SpelerLevel {LevelId = 1, SpelerId = 1, TopScore = 100 },
+                    new SpelerLevel {LevelId = 1, SpelerId = 2, TopScore = 999 },
+                    new SpelerLevel {LevelId = 1, SpelerId = 3, TopScore = 567 },
+                    new SpelerLevel {LevelId = 2, SpelerId = 1, TopScore = 945 },
+                    new SpelerLevel {LevelId = 2, SpelerId = 2, TopScore = 123 }];
+
+                foreach (SpelerLevel speler_level in speler_level_lijst)
+                {
+                    await levelleaderboard_repository.AddAsync(speler_level);
                 }
             }
         }
