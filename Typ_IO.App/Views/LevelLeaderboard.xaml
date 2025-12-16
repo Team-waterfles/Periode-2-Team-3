@@ -21,12 +21,12 @@
                            CornerRadius="15"
                            BackgroundColor="#F2F2F2"
                            HasShadow="True">
-                        <HorizontalStackLayout Spacing="5">
-                            <Label Text="{Binding Positie}"
+                        <HorizontalStackLayout Spacing="100">
+                            <Label Text="{Binding TopScore}"
                                    FontSize="20"/>
                             <Label Text="{Binding Naam}"
                                    FontSize="20"/>
-                            <Label Text="{Binding TopScore}"
+                            <Label Text="{Binding Positie}"
                                    FontSize="20"/>
                         </HorizontalStackLayout>
                     </Frame>
