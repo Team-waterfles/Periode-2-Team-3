@@ -8,8 +8,14 @@ namespace Typ_IO.Core.Models
 {
     public class LevelScore
     {
-        public LevelScore() {}
-        public int SpelerId { get; set; }
+        public LevelScore(string naam, int topscore, int positie = 0)
+        {
+            Naam = naam;
+            Positie = positie;
+            TopScore = topscore;
+        }
+        public string Naam { get; set; }
+        public int Positie { get; set; }
         public int TopScore { get; set; }
     }
 }

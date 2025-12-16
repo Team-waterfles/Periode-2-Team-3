@@ -38,7 +38,7 @@ namespace Typ_IO.Core.Data
             cmd.Parameters.AddWithValue("$speler_id", speler_level.SpelerId);
             await cmd.ExecuteNonQueryAsync(ct);
         }
-        public async Task<List<SpelerLevel>> GetLeaderboardAsync(int level_id, CancellationToken ct = default)
+        public async Task<List<LevelScore>> GetLeaderboardAsync(int level_id, CancellationToken ct = default)
         {
             using var conn = await _factory.CreateOpenConnectionAsync();
             using var cmd = conn.CreateCommand();
@@ -46,16 +46,15 @@ namespace Typ_IO.Core.Data
             cmd.Parameters.AddWithValue("$level_id", level_id);
             using var reader = await cmd.ExecuteReaderAsync(ct);
 
-            var list = new List<SpelerLevel>();
+            var list = new List<LevelScore>();
             while (await reader.ReadAsync(ct))
             {
-                var speler_level = new SpelerLevel
-                {
-                    LevelId = reader.GetInt32(0),
-                    SpelerId = reader.GetInt32(1),
-                    TopScore = reader.GetInt32(2)
-                };
-                list.Add(speler_level);
+                var levelscore = new LevelScore
+                (
+                    reader.GetString(0),
+                    reader.GetInt32(1)
+                );
+                list.Add(levelscore);
             }
             return list;
         }

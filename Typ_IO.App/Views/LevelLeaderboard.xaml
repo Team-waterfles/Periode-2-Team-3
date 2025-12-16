@@ -8,7 +8,7 @@
                FontSize="28"
                FontAttributes="Bold"
                HorizontalOptions="Center" />
-        <CollectionView ItemsSource="{Binding SpelerLevel}"
+        <CollectionView ItemsSource="{Binding Levelscores}"
                         SelectionMode="None">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
