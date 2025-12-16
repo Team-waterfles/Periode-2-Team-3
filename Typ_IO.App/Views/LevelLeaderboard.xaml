@@ -2,9 +2,9 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:BasisJaar2.ViewModels"
-             xmlns:models="clr-namespace:BasisJaar2.Models"
-             x:Class="BasisJaar2.Views.Levelleaderboard"
-             x:DataType="vm:LevelleaderboardViewModel">
+             xmlns:models="clr-namespace:Typ_IO.Core.Models;assembly=Typ_IO.Core"
+             x:Class="BasisJaar2.Views.LevelLeaderboard"
+             x:DataType="vm:LevelLeaderboardViewModel">
 
     <VerticalStackLayout>
         <!-- Titel -->
@@ -15,7 +15,7 @@
         <CollectionView ItemsSource="{Binding Levelscores}"
                         SelectionMode="None">
             <CollectionView.ItemTemplate>
-                <DataTemplate>
+                <DataTemplate x:DataType="models:LevelScore">
                     <Frame Padding="15"
                            Margin="0,10"
                            CornerRadius="15"
@@ -26,7 +26,7 @@
                                    FontSize="20"/>
                             <Label Text="{Binding Naam}"
                                    FontSize="20"/>
-                            <Label Text="{Binding Score}"
+                            <Label Text="{Binding TopScore}"
                                    FontSize="20"/>
                         </HorizontalStackLayout>
                     </Frame>

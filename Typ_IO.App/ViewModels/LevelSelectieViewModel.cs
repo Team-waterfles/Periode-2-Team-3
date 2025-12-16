@@ -56,7 +56,7 @@ namespace BasisJaar2.ViewModels
 
             var currentPage = MainPageViewModel.Current.SubpageContent;
             MainPageViewModel.Current.SubpageContent =
-                new Levelleaderboard(level);
+                new LevelLeaderboard(level);
 
         }
     }

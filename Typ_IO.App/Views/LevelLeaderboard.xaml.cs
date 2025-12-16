@@ -3,11 +3,11 @@ using Typ_IO.Core.Models;
 
 namespace BasisJaar2.Views;
 
-public partial class Levelleaderboard : ContentView
+public partial class LevelLeaderboard : ContentView
 {
-	public Levelleaderboard(Standaardlevel level)
+	public LevelLeaderboard(Standaardlevel level)
 	{
 		InitializeComponent();
-        BindingContext = new LevelleaderboardViewModel(level);
+        BindingContext = new LevelLeaderboardViewModel(level);
     }
 }

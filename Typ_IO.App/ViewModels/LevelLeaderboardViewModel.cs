@@ -7,12 +7,12 @@ using Typ_IO.Core.Repositories;
 using Typ_IO.Core.Models;
 
 namespace BasisJaar2.ViewModels;
-public partial class LevelleaderboardViewModel : BindableObject
-{
-    public ObservableCollection<LevelScore> Levelscores = [];
+public partial class LevelLeaderboardViewModel : BindableObject
+{    
+    public ObservableCollection<LevelScore> Levelscores { get; } = [];
     private readonly ILevelleaderboardRepository _leaderboardrepository;
 
-    public LevelleaderboardViewModel(Standaardlevel level)
+    public LevelLeaderboardViewModel(Standaardlevel level)
     {
         _leaderboardrepository = Application.Current.Windows[0].Page.Handler.MauiContext.Services.GetService<ILevelleaderboardRepository>();
         GetLeaderboard(level);
