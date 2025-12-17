@@ -17,7 +17,7 @@ namespace BasisJaar2.ViewModels
         private bool _timerLoopt;
         private int _firstErrorIndex = -1;
 
-    private List<char> _fouten = new List<char>();
+        private List<char> _fouten = new List<char>();
         public IReadOnlyList<char> Fouten => _fouten.AsReadOnly();
 
         private int _totaalFouten;
