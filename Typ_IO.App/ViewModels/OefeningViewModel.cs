@@ -30,7 +30,21 @@ namespace BasisJaar2.ViewModels
         public string VoorbeeldTekst { get; }
         public int LevelId { get; }
 
-        public bool PracticeModeHints { get; set; } = false;
+        // ✅ FIX: PracticeModeHints moet updates triggeren
+        private bool _practiceModeHints = false;
+        public bool PracticeModeHints
+        {
+            get => _practiceModeHints;
+            set
+            {
+                if (_practiceModeHints == value) return;
+                _practiceModeHints = value;
+                OnPropertyChanged(nameof(PracticeModeHints));
+
+                UpdateHint();
+                UpdateLetterImage();
+            }
+        }
 
         private string _huidigeHint;
         public string HuidigeHint
@@ -46,37 +60,53 @@ namespace BasisJaar2.ViewModels
             set { _formattedVoorbeeldTekst = value; OnPropertyChanged(nameof(FormattedVoorbeeldTekst)); }
         }
 
+        // ✅ NIEUW: afbeelding voor de volgende letter/spatie
+        private string _currentLetterImage;
+        public string CurrentLetterImage
+        {
+            get => _currentLetterImage;
+            set
+            {
+                _currentLetterImage = value;
+                OnPropertyChanged(nameof(CurrentLetterImage));
+                OnPropertyChanged(nameof(HasCurrentLetterImage));
+            }
+        }
+
+        // ✅ Voor XAML IsVisible
+        public bool HasCurrentLetterImage => !string.IsNullOrEmpty(CurrentLetterImage);
+
         private readonly Dictionary<char, string> _vingerHints = new()
-    {
-        { 'f', "Linker wijsvinger (F)" }, { 'F', "Linker wijsvinger (F)" },
-        { 'j', "Rechter wijsvinger (J)" }, { 'J', "Rechter wijsvinger (J)" },
-        { 'd', "Linker middelvinger (D)" }, { 'D', "Linker middelvinger (D)" },
-        { 'k', "Rechter middelvinger (K)" }, { 'K', "Rechter middelvinger (K)" },
-        { 's', "Linker ringvinger (S)" }, { 'S', "Linker ringvinger (S)" },
-        { 'l', "Rechter ringvinger (L)" }, { 'L', "Rechter ringvinger (L)" },
-        { 'a', "Linker pink (A)" }, { 'A', "Linker pink (A)" },
-        { ';', "Rechter pink (;)" },
-        { 'g', "Linker wijsvinger (G)" }, { 'G', "Linker wijsvinger (G)" },
-        { 'h', "Rechter wijsvinger (H)" }, { 'H', "Rechter wijsvinger (H)" },
-        { 't', "Linker wijsvinger (T)" }, { 'T', "Linker wijsvinger (T)" },
-        { 'y', "Rechter wijsvinger (Y)" }, { 'Y', "Rechter wijsvinger (Y)" },
-        { 'r', "Linker wijsvinger (R)" }, { 'R', "Linker wijsvinger (R)" },
-        { 'u', "Rechter wijsvinger (U)" }, { 'U', "Rechter wijsvinger (U)" },
-        { 'e', "Linker middelvinger (E)" }, { 'E', "Linker middelvinger (E)" },
-        { 'i', "Rechter middelvinger (I)" }, { 'I', "Rechter middelvinger (I)" },
-        { 'w', "Linker ringvinger (W)" }, { 'W', "Linker ringvinger (W)" },
-        { 'o', "Rechter ringvinger (O)" }, { 'O', "Rechter ringvinger (O)" },
-        { 'q', "Linker pink (Q)" }, { 'Q', "Linker pink (Q)" },
-        { 'p', "Rechter pink (P)" }, { 'P', "Rechter pink (P)" },
-        { 'z', "Linker ringvinger (Z)" }, { 'Z', "Linker ringvinger (Z)" },
-        { 'x', "Linker middelvinger (X)" }, { 'X', "Linker middelvinger (X)" },
-        { 'c', "Linker middelvinger (C)" }, { 'C', "Linker middelvinger (C)" },
-        { 'v', "Linker wijsvinger (V)" }, { 'V', "Linker wijsvinger (V)" },
-        { 'b', "Linker wijsvinger / duim (B)" }, { 'B', "Linker wijsvinger / duim (B)" },
-        { 'n', "Rechter wijsvinger (N)" }, { 'N', "Rechter wijsvinger (N)" },
-        { 'm', "Rechter middelvinger (M)" }, { 'M', "Rechter middelvinger (M)" },
-        { ' ', "Spatiebalk (duim)" }
-    };
+        {
+            { 'f', "Linker wijsvinger (F)" }, { 'F', "Linker wijsvinger (F)" },
+            { 'j', "Rechter wijsvinger (J)" }, { 'J', "Rechter wijsvinger (J)" },
+            { 'd', "Linker middelvinger (D)" }, { 'D', "Linker middelvinger (D)" },
+            { 'k', "Rechter middelvinger (K)" }, { 'K', "Rechter middelvinger (K)" },
+            { 's', "Linker ringvinger (S)" }, { 'S', "Linker ringvinger (S)" },
+            { 'l', "Rechter ringvinger (L)" }, { 'L', "Rechter ringvinger (L)" },
+            { 'a', "Linker pink (A)" }, { 'A', "Linker pink (A)" },
+            { ';', "Rechter pink (;)" },
+            { 'g', "Linker wijsvinger (G)" }, { 'G', "Linker wijsvinger (G)" },
+            { 'h', "Rechter wijsvinger (H)" }, { 'H', "Rechter wijsvinger (H)" },
+            { 't', "Linker wijsvinger (T)" }, { 'T', "Linker wijsvinger (T)" },
+            { 'y', "Rechter wijsvinger (Y)" }, { 'Y', "Rechter wijsvinger (Y)" },
+            { 'r', "Linker wijsvinger (R)" }, { 'R', "Linker wijsvinger (R)" },
+            { 'u', "Rechter wijsvinger (U)" }, { 'U', "Rechter wijsvinger (U)" },
+            { 'e', "Linker middelvinger (E)" }, { 'E', "Linker middelvinger (E)" },
+            { 'i', "Rechter middelvinger (I)" }, { 'I', "Rechter middelvinger (I)" },
+            { 'w', "Linker ringvinger (W)" }, { 'W', "Linker ringvinger (W)" },
+            { 'o', "Rechter ringvinger (O)" }, { 'O', "Rechter ringvinger (O)" },
+            { 'q', "Linker pink (Q)" }, { 'Q', "Linker pink (Q)" },
+            { 'p', "Rechter pink (P)" }, { 'P', "Rechter pink (P)" },
+            { 'z', "Linker ringvinger (Z)" }, { 'Z', "Linker ringvinger (Z)" },
+            { 'x', "Linker middelvinger (X)" }, { 'X', "Linker middelvinger (X)" },
+            { 'c', "Linker middelvinger (C)" }, { 'C', "Linker middelvinger (C)" },
+            { 'v', "Linker wijsvinger (V)" }, { 'V', "Linker wijsvinger (V)" },
+            { 'b', "Linker wijsvinger / duim (B)" }, { 'B', "Linker wijsvinger / duim (B)" },
+            { 'n', "Rechter wijsvinger (N)" }, { 'N', "Rechter wijsvinger (N)" },
+            { 'm', "Rechter middelvinger (M)" }, { 'M', "Rechter middelvinger (M)" },
+            { ' ', "Spatiebalk (duim)" }
+        };
 
         public OefeningViewModel(IDispatcher dispatcher, Level level)
         {
@@ -95,7 +125,8 @@ namespace BasisJaar2.ViewModels
             ResultaatVisible = false;
             Started = false;
 
-            UpdateHint(); // eerste hint tonen
+            UpdateHint();
+            UpdateLetterImage(); // ✅ eerste afbeelding (als PracticeModeHints true is)
         }
 
         public bool Started { get; private set; }
@@ -106,7 +137,13 @@ namespace BasisJaar2.ViewModels
         public string Invoer
         {
             get => _invoer;
-            set { _invoer = value; OnPropertyChanged(nameof(Invoer)); UpdateHint(); }
+            set
+            {
+                _invoer = value;
+                OnPropertyChanged(nameof(Invoer));
+                UpdateHint();
+                UpdateLetterImage();
+            }
         }
 
         private int _aantalKarakters;
@@ -158,6 +195,42 @@ namespace BasisJaar2.ViewModels
             set { _formattedInvoer = value; OnPropertyChanged(nameof(FormattedInvoer)); }
         }
 
+        // NIEUW: bepaalt welke afbeelding moet tonen (a.png..z.png + space.png)
+        private void UpdateLetterImage()
+        {
+            if (!PracticeModeHints || string.IsNullOrEmpty(VoorbeeldTekst))
+            {
+                CurrentLetterImage = null;
+                return;
+            }
+
+            int index = Invoer?.Length ?? 0;
+
+            if (index >= VoorbeeldTekst.Length)
+            {
+                CurrentLetterImage = null;
+                return;
+            }
+
+            char next = char.ToLower(VoorbeeldTekst[index]);
+
+            // letters a-z
+            if (next >= 'a' && next <= 'z')
+            {
+                CurrentLetterImage = $"{next}.png";
+                return;
+            }
+
+            // spatie
+            if (next == ' ')
+            {
+                CurrentLetterImage = "spatie.png";
+                return;
+            }
+
+            CurrentLetterImage = null;
+        }
+
         public void VoegKarakterToe(char c)
         {
             if (_firstErrorIndex != -1) return;
@@ -173,6 +246,7 @@ namespace BasisJaar2.ViewModels
             Invoer += c;
             AantalKarakters = Invoer.Length;
             UpdateFormattedInvoer();
+            UpdateLetterImage();
 
             if (Invoer.Length == VoorbeeldTekst.Length && _firstErrorIndex == -1)
                 StopOefening();
@@ -187,6 +261,7 @@ namespace BasisJaar2.ViewModels
                 _firstErrorIndex = -1;
 
             UpdateFormattedInvoer();
+            UpdateLetterImage();
         }
 
         private void UpdateFormattedInvoer()
@@ -196,7 +271,6 @@ namespace BasisJaar2.ViewModels
 
             for (int i = 0; i < VoorbeeldTekst.Length; i++)
             {
-                // ===== VOORBEELDTEKST =====
                 var voorbeeldSpan = new Span
                 {
                     Text = VoorbeeldTekst[i].ToString(),
@@ -213,7 +287,6 @@ namespace BasisJaar2.ViewModels
 
                 voorbeeldFs.Spans.Add(voorbeeldSpan);
 
-                // ===== INVOER =====
                 if (i < Invoer.Length)
                 {
                     var invoerSpan = new Span
@@ -229,7 +302,6 @@ namespace BasisJaar2.ViewModels
             FormattedInvoer = invoerFs;
         }
 
-
         private void UpdateHint()
         {
             if (!PracticeModeHints || Invoer.Length >= VoorbeeldTekst.Length)
@@ -239,7 +311,9 @@ namespace BasisJaar2.ViewModels
             }
 
             char volgende = VoorbeeldTekst[Invoer.Length];
-            HuidigeHint = _vingerHints.ContainsKey(volgende) ? _vingerHints[volgende] : "Gebruik de juiste vinger voor deze toets";
+            HuidigeHint = _vingerHints.ContainsKey(volgende)
+                ? _vingerHints[volgende]
+                : "Gebruik de juiste vinger voor deze toets";
         }
 
         public void Start()
@@ -259,10 +333,12 @@ namespace BasisJaar2.ViewModels
             StopEnabled = true;
             ResultaatVisible = false;
 
+            UpdateLetterImage();
             StartTimerUpdate();
         }
 
         public void Stop() => StopOefening();
+
         public void Opnieuw()
         {
             _stopwatch.Reset();
@@ -279,6 +355,8 @@ namespace BasisJaar2.ViewModels
 
             _fouten.Clear();
             TotaalFouten = 0;
+
+            UpdateLetterImage();
         }
 
         public void Terug()
@@ -290,7 +368,6 @@ namespace BasisJaar2.ViewModels
 
             if (MainPageViewModel.Current != null)
                 MainPageViewModel.Current.SubpageContent = new Views.LevelSelectie(1);
-
         }
 
         private void StopOefening()
@@ -332,6 +409,7 @@ namespace BasisJaar2.ViewModels
             }
 
             ResultaatVisible = true;
+            CurrentLetterImage = null;
         }
 
         private int TelWoorden(string tekst)
