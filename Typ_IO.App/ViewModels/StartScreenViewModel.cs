@@ -21,8 +21,7 @@ namespace BasisJaar2.ViewModels
         {
             if (MainPageViewModel.Current != null)
             {
-                MainPageViewModel.Current.SubpageContent =
-                    new BasisJaar2.Views.MoeilijkheidsgraadPage();
+                MainPageViewModel.Current.SubpageContent = new BasisJaar2.Views.SongMode();
             }
             else
             {
