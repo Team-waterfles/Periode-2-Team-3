@@ -10,4 +10,12 @@ public partial class LevelLeaderboard : ContentView
 		InitializeComponent();
         BindingContext = new LevelLeaderboardViewModel(level);
     }
+    private void OnTerugClicked(object sender, EventArgs e)
+    {
+        if (MainPageViewModel.Current != null)
+        {
+            MainPageViewModel.Current.SubpageContent =
+                new MoeilijkheidsgraadPage();
+        }
+    }
 }

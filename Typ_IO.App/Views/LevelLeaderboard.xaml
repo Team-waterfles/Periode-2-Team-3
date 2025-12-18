@@ -7,6 +7,23 @@
              x:DataType="vm:LevelLeaderboardViewModel">
     <ScrollView>
         <VerticalStackLayout>
+            <!-- Terugknop linksboven -->
+            <Border StrokeThickness="0"
+                Background="#061f4f"
+                StrokeShape="RoundRectangle 10"
+                WidthRequest="100"
+                HeightRequest="40"
+                HorizontalOptions="Start"
+                Margin="0,0,0,10">
+                <Label Text="Terug"
+                   TextColor="White"
+                   FontSize="16"
+                   VerticalOptions="Center"
+                   HorizontalOptions="Center" />
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnTerugClicked" />
+                </Border.GestureRecognizers>
+            </Border>
             <!-- Titel -->
             <Label Text="Leaderboard"
                    FontSize="28"
