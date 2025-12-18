@@ -7,10 +7,7 @@
         <VerticalStackLayout Padding="20" Spacing="20">
 
             <!-- Titel -->
-            <Label Text="Typ Oefening"
-                   FontSize="32"
-                   FontAttributes="Bold"
-                   HorizontalOptions="Center" />
+            <Label Text="Typ Oefening" FontSize="32" FontAttributes="Bold" HorizontalOptions="Center" />
 
             <!-- Timer + Karakters -->
             <HorizontalStackLayout HorizontalOptions="Center" Spacing="30">
@@ -24,11 +21,16 @@
             <Frame BorderColor="Black"
                    CornerRadius="10"
                    Padding="15"
-                   BackgroundColor="White">
-                <Label Text="{Binding VoorbeeldTekst}"
+                   BackgroundColor="White"
+                   HorizontalOptions="Center"
+                   WidthRequest="600"
+                   HeightRequest="200">
+                <Label FormattedText="{Binding FormattedVoorbeeldTekst}"
                        FontSize="18"
                        FontFamily="CourierNew"
-                       LineBreakMode="WordWrap" />
+                       LineBreakMode="WordWrap"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center" />
             </Frame>
 
             <!-- Hint (practice mode) -->
