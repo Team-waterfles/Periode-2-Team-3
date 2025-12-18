@@ -7,6 +7,7 @@ using Microsoft.Maui.Controls;
 using Microsoft.Maui.Dispatching;
 using BasisJaar2.Models;
 using Typ_IO.Core.Models;
+using Typ_IO.Core.Services;
 
 namespace BasisJaar2.ViewModels
 {
@@ -20,6 +21,21 @@ namespace BasisJaar2.ViewModels
 
         private readonly List<string> _regels = new();
         private int _huidigeRegelIndex;
+
+        public string VoorbeeldTekst { get; }
+        public int SpelerId { get; }
+        public int LevelId { get; }
+        public bool IsOefening { get; }
+
+
+        public bool PracticeModeHints { get; set; } = false;
+
+        private string _huidigeHint;
+        public string HuidigeHint
+        {
+            get => _huidigeHint;
+            set { _huidigeHint = value; OnPropertyChanged(nameof(HuidigeHint)); }
+        }
 
         private readonly List<(int Index, char Getypt, char Verwacht)> _fouten = new();
         private int _firstErrorIndex = -1;
@@ -56,6 +72,30 @@ namespace BasisJaar2.ViewModels
             { 'm', "Rechter middelvinger (M)" }, { 'M', "Rechter middelvinger (M)" },
             { ' ', "Spatiebalk (duim)" }
         };
+
+        public OefeningViewModel(IDispatcher dispatcher, Level level, bool is_oefening)
+        {
+            _leaderboardService = new LeaderboardService();
+
+            _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
+            VoorbeeldTekst = level.Tekst;
+            SpelerId = 1;
+            LevelId = level.Id;
+            IsOefening = is_oefening;
+
+            _stopwatch = new Stopwatch();
+            Invoer = string.Empty;
+            UpdateFormattedInvoer();
+
+            Tijd = "00:00";
+            AantalKarakters = 0;
+            StartEnabled = true;
+            StopEnabled = false;
+            ResultaatVisible = false;
+            Started = false;
+
+            UpdateHint(); // eerste hint tonen
+        }
 
         public string VoorbeeldTekst { get; }
         public int LevelId { get; }
@@ -323,6 +363,7 @@ namespace BasisJaar2.ViewModels
             var woorden = Invoer.Split(' ', StringSplitOptions.RemoveEmptyEntries).Length;
             var wpm = tijd.TotalMinutes > 0 ? Math.Round(woorden / tijd.TotalMinutes, 2) : 0;
 
+
             string foutenTekst =
                 _fouten.Count == 0
                     ? "Geen fouten"
@@ -333,6 +374,21 @@ namespace BasisJaar2.ViewModels
                 $"Woorden: {woorden}\n" +
                 $"WPM: {wpm}\n\n" +
                 foutenTekst;
+
+            bool foutenOk = _fouten.Count <= (AantalKarakters / 100.0) * 10;
+            bool wpmOk = wpm >= 20;
+            bool levelGehaald = foutenOk && wpmOk;
+
+            if (levelGehaald)
+            {
+                PracticeSession.MarkLevelGehaald(LevelId);
+                if (!IsOefening) { _leaderboardService.plaats_score(LevelId, SpelerId, 900); }
+                ResultaatTekst += "\nLevel gehaald!";
+            }
+            else
+            {
+                ResultaatTekst += "\nLevel NIET gehaald.";
+            }
 
             ResultaatVisible = true;
         }

@@ -12,7 +12,7 @@ namespace BasisJaar2.Views
     {
         private readonly ContentView _previousPage;
 
-        public Oefening(Level level, ContentView previousPage = null)
+        public Oefening(Level level, bool is_oefening, ContentView previousPage = null)
         {
             InitializeComponent();
 
@@ -20,7 +20,7 @@ namespace BasisJaar2.Views
 
             string voorbeeldTekst = level.Tekst;
 
-            var vm = new OefeningViewModel(this.Dispatcher, level);
+            var vm = new OefeningViewModel(this.Dispatcher, level, is_oefening);
 
             if (_previousPage is LevelsPage)
                 vm.PracticeModeHints = true;
