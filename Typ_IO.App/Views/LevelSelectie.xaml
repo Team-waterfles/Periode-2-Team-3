@@ -56,7 +56,7 @@
                                 <Button Text="Start" MinimumWidthRequest="500"
                                     Command="{Binding BindingContext.StartLevelCommand, Source={x:Reference Root}}"
                                     CommandParameter="{Binding}" />
-                                <Button Text="Leaderboard"
+                                <Button Text="Leaderboard" MinimumWidthRequest="500"
                                     Command="{Binding BindingContext.OpenLeaderboardCommand, Source={x:Reference Root}}"
                                     CommandParameter="{Binding}" />
 
