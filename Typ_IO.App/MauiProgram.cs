@@ -33,6 +33,8 @@ namespace BasisJaar2
 
             builder.Services.AddScoped<IStandaardlevelRepository, StandaardlevelRepository>();
             builder.Services.AddScoped<IOefenlevelRepository, OefenlevelRepository>();
+            builder.Services.AddScoped<ISpelerRepository, SpelerRepository>();
+            builder.Services.AddScoped<ILevelleaderboardRepository, LevelleaderboardRepository>();
 
 #if DEBUG
             builder.Logging.AddDebug();
@@ -58,6 +60,11 @@ namespace BasisJaar2
         }
         private static async Task SeedAsync(IServiceProvider sp)
         {
+            var standaardlevelrepository = sp.GetRequiredService<IStandaardlevelRepository>();
+            var oefenlevelrepository = sp.GetRequiredService<IOefenlevelRepository>();
+            var speler_repository = sp.GetRequiredService<ISpelerRepository>();
+            var levelleaderboard_repository = sp.GetRequiredService<ILevelleaderboardRepository>();
+
             Standaardlevel[] standaardlevels = [
                 new Standaardlevel {Moeilijkheidsgraad = 1, Naam = "Testlevel1", Tekst = "Pa's wijze lynx bezag vroom het fikse aquaduct" },
                 new Standaardlevel {Moeilijkheidsgraad = 1, Naam = "Testlevel2", Tekst = "Typ deze zin zorgvuldig om je snelheid te testen" },
@@ -75,6 +82,50 @@ namespace BasisJaar2
                 new Oefenlevel {Id = 4, Naam = "letters bovenste rij", Letteropties = " qwertyuiop" },
                 new Oefenlevel {Id = 5, Naam = "10 vingers", Letteropties = " ;qwertyuiopasdfghjklzxcvbnm" }];
             await SeedOefenlevelAsync(sp.GetRequiredService<IOefenlevelRepository>(), oefenlevels);
+
+            if ((await speler_repository.ListAsync()).Count == 0)
+            {
+                Speler[] spelers = [
+                    new Speler {Naam = "Jij!" },
+                    new Speler {Naam = "De beste speler" },
+                    new Speler {Naam = "Foutontwijker" },
+                    new Speler {Naam = "De Typraket" },
+                    new Speler {Naam = "Typkampioen" },
+                    new Speler {Naam = "De typpolitie" },
+                    new Speler {Naam = "Ikben200%" },
+                    new Speler {Naam = "De letterfabriek" },
+                    new Speler {Naam = "Typende typer" },
+                    new Speler {Naam = "123Typer" }];
+
+                foreach (Speler speler in spelers)
+                {
+                    await speler_repository.AddAsync(speler);
+                }
+            }
+
+            if ((await levelleaderboard_repository.GetLeaderboardAsync(1)).Count == 0)
+            {
+                SpelerLevel[] speler_level_lijst = [
+                    new SpelerLevel {LevelId = 1, SpelerId = 2, TopScore = 1000 },
+                    new SpelerLevel {LevelId = 1, SpelerId = 3, TopScore = 500 },
+                    new SpelerLevel {LevelId = 1, SpelerId = 4, TopScore = 300 },
+                    new SpelerLevel {LevelId = 1, SpelerId = 5, TopScore = 250 },
+                    new SpelerLevel {LevelId = 1, SpelerId = 6, TopScore = 200 },
+                    new SpelerLevel {LevelId = 1, SpelerId = 7, TopScore = 190 },
+                    new SpelerLevel {LevelId = 1, SpelerId = 8, TopScore = 190 },
+                    new SpelerLevel {LevelId = 1, SpelerId = 9, TopScore = 160 },
+                    new SpelerLevel {LevelId = 1, SpelerId = 10, TopScore = 150 },
+                    new SpelerLevel {LevelId = 2, SpelerId = 2, TopScore = 100 },
+                    new SpelerLevel {LevelId = 2, SpelerId = 3, TopScore = 999 },
+                    new SpelerLevel {LevelId = 2, SpelerId = 4, TopScore = 567 },
+                    new SpelerLevel {LevelId = 3, SpelerId = 2, TopScore = 945 },
+                    new SpelerLevel {LevelId = 3, SpelerId = 3, TopScore = 123 }];
+
+                foreach (SpelerLevel speler_level in speler_level_lijst)
+                {
+                    await levelleaderboard_repository.AddAsync(speler_level);
+                }
+            }
         }
         private static async Task SeedStandaardlevelAsync(IStandaardlevelRepository levelrepository, Standaardlevel[] levels)
         {

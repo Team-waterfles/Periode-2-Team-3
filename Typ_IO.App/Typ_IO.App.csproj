@@ -65,6 +65,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Views\LevelLeaderboard.xaml.cs">
+	    <DependentUpon>LevelLeaderboard.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\Oefening.xaml.cs">
 	    <DependentUpon>Oefening.xaml</DependentUpon>
 	  </Compile>
@@ -81,6 +84,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\Header.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\LevelLeaderboard.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\LevelSelectie.xaml">

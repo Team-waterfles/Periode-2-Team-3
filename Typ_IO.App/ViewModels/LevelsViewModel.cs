@@ -53,7 +53,7 @@ public class LevelsViewModel : BindableObject
         {
             var currentPage = MainPageViewModel.Current.SubpageContent;
             MainPageViewModel.Current.SubpageContent =
-                new Oefening(PracticeSession.GeselecteerdLevel, currentPage);
+                new Oefening(PracticeSession.GeselecteerdLevel, true, currentPage);
         }
     }
 }
