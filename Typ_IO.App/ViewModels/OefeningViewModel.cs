@@ -7,6 +7,7 @@ using Microsoft.Maui.Controls;
 using BasisJaar2.Models;
 using BasisJaar2.Views;
 using Typ_IO.Core.Models;
+using Typ_IO.Core.Services;
 
 namespace BasisJaar2.ViewModels
 {
@@ -307,30 +308,64 @@ namespace BasisJaar2.ViewModels
 
         private void ToonResultaat()
         {
+            // Haal de tijd op die de stopwatch heeft gemeten
             var tijd = _stopwatch.Elapsed;
+
+            // Tel hoeveel woorden er zijn getypt
             var aantalWoorden = TelWoorden(Invoer);
+
+            // Bereken hoeveel minuten er zijn verstreken
             var tijdInMinuten = tijd.TotalMinutes;
-            var wpm = tijdInMinuten > 0 ? Math.Round(aantalWoorden / tijdInMinuten, 2) : 0;
 
-            string foutTekst = _fouten.Count > 0 ? $"Fouten ({_fouten.Count}): {string.Join(", ", _fouten)}" : "Geen fouten";
+            // Bereken WPM (woorden per minuut)
+            var wpm = 0.0;
+            if (tijdInMinuten > 0)
+            {
+                wpm = aantalWoorden / tijdInMinuten;
+                wpm = Math.Round(wpm, 2); // Rond af op 2 decimalen
+            }
 
-            ResultaatTekst =
-                $"Tijd: {tijd:mm\\:ss}\nKarakters: {AantalKarakters}\nWoorden: {aantalWoorden}\nWPM: {wpm}\n{foutTekst}";
+            // Tekst voor de fouten
+            string foutTekst = "Geen fouten";
+            if (_fouten.Count > 0)
+            {
+                foutTekst = $"Fouten ({_fouten.Count}): {string.Join(", ", _fouten)}";
+            }
 
-            bool foutenOk = _fouten.Count <= (AantalKarakters / 100.0) * 10;
-            bool wpmOk = wpm >= 20;
+            // Bereken de score
+            int score = ScoreBerekening.BerekenScore(wpm, _fouten.Count, AantalKarakters);
+
+            // Maak de resultaat tekst die de speler ziet
+            ResultaatTekst = $"Tijd: {tijd:mm\\:ss}\n";
+            ResultaatTekst += $"Karakters: {AantalKarakters}\n";
+            ResultaatTekst += $"Woorden: {aantalWoorden}\n";
+            ResultaatTekst += $"WPM: {wpm}\n";
+            ResultaatTekst += $"{foutTekst}\n";
+            ResultaatTekst += $"\n SCORE: {score} punten";
+
+            // Check of het level gehaald is
+            bool foutenOk = false;
+            if (AantalKarakters > 0)
+            {
+                double foutPercentage = (double)_fouten.Count / AantalKarakters;
+                foutenOk = foutPercentage <= 0.10; // Maximaal 10% fouten
+            }
+
+            bool wpmOk = wpm >= 20; // Minimaal 20 WPM
+
             bool levelGehaald = foutenOk && wpmOk;
 
             if (levelGehaald)
             {
                 PracticeSession.MarkLevelGehaald(LevelId);
-                ResultaatTekst += "\nLevel gehaald!";
+                ResultaatTekst += "\n\n Level gehaald!";
             }
             else
             {
-                ResultaatTekst += "\nLevel NIET gehaald.";
+                ResultaatTekst += "\n\n Level NIET gehaald.";
             }
 
+            // Laat het resultaat zien
             ResultaatVisible = true;
         }
 
