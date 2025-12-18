@@ -15,7 +15,9 @@ namespace BasisJaar2.ViewModels
     {
         private readonly IDispatcher _dispatcher;
         private readonly Stopwatch _stopwatch = new();
+        private LeaderboardService _leaderboardService;
 
+        public int AantalKarakters { get; }
         private const int MaxKaraktersPerRegel = 40;
         private const int MinKaraktersLaatsteRegel = 15;
 
@@ -73,6 +75,7 @@ namespace BasisJaar2.ViewModels
             { ' ', "Spatiebalk (duim)" }
         };
 
+        #region Constructor
         public OefeningViewModel(IDispatcher dispatcher, Level level, bool is_oefening)
         {
             _leaderboardService = new LeaderboardService();
@@ -85,7 +88,6 @@ namespace BasisJaar2.ViewModels
 
             _stopwatch = new Stopwatch();
             Invoer = string.Empty;
-            UpdateFormattedInvoer();
 
             Tijd = "00:00";
             AantalKarakters = 0;
@@ -94,12 +96,11 @@ namespace BasisJaar2.ViewModels
             ResultaatVisible = false;
             Started = false;
 
+            BereidRegelsVoor();
+            UpdateFormattedRegels();
             UpdateHint(); // eerste hint tonen
         }
-
-        public string VoorbeeldTekst { get; }
-        public int LevelId { get; }
-
+        #endregion
         #region Bindings
         private string _invoer = string.Empty;
         public string Invoer
@@ -162,29 +163,7 @@ namespace BasisJaar2.ViewModels
             get => _resultaatTekst;
             private set { _resultaatTekst = value; OnPropertyChanged(nameof(ResultaatTekst)); }
         }
-
-        private string _huidigeHint;
-        public string HuidigeHint
-        {
-            get => _huidigeHint;
-            private set { _huidigeHint = value; OnPropertyChanged(nameof(HuidigeHint)); }
-        }
-
         public bool Started { get; private set; }
-        public bool PracticeModeHints { get; set; }
-        #endregion
-
-        #region Constructor
-        public OefeningViewModel(IDispatcher dispatcher, Level level)
-        {
-            _dispatcher = dispatcher;
-            VoorbeeldTekst = level.Tekst;
-            LevelId = level.Id;
-
-            BereidRegelsVoor();
-            UpdateFormattedRegels();
-            UpdateHint();
-        }
         #endregion
 
         #region Regels voorbereiden
