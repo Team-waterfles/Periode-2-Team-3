@@ -7,6 +7,7 @@ using Microsoft.Maui.Controls;
 using BasisJaar2.Models;
 using BasisJaar2.Views;
 using Typ_IO.Core.Models;
+using Typ_IO.Core.Services;
 
 namespace BasisJaar2.ViewModels
 {
@@ -16,6 +17,7 @@ namespace BasisJaar2.ViewModels
         private readonly Stopwatch _stopwatch;
         private bool _timerLoopt;
         private int _firstErrorIndex = -1;
+        private LeaderboardService _leaderboardService;
 
     private List<char> _fouten = new List<char>();
         public IReadOnlyList<char> Fouten => _fouten.AsReadOnly();
@@ -28,7 +30,10 @@ namespace BasisJaar2.ViewModels
         }
 
         public string VoorbeeldTekst { get; }
+        public int SpelerId { get; }
         public int LevelId { get; }
+        public bool IsOefening { get; }
+
 
         public bool PracticeModeHints { get; set; } = false;
 
@@ -71,11 +76,15 @@ namespace BasisJaar2.ViewModels
         { ' ', "Spatiebalk (duim)" }
     };
 
-        public OefeningViewModel(IDispatcher dispatcher, Level level)
+        public OefeningViewModel(IDispatcher dispatcher, Level level, bool is_oefening)
         {
+            _leaderboardService = new LeaderboardService();
+
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
             VoorbeeldTekst = level.Tekst;
+            SpelerId = 1;
             LevelId = level.Id;
+            IsOefening = is_oefening;
 
             _stopwatch = new Stopwatch();
             Invoer = string.Empty;
@@ -298,6 +307,7 @@ namespace BasisJaar2.ViewModels
             if (levelGehaald)
             {
                 PracticeSession.MarkLevelGehaald(LevelId);
+                if (!IsOefening) { _leaderboardService.plaats_score(LevelId, SpelerId, 900); }
                 ResultaatTekst += "\nLevel gehaald!";
             }
             else

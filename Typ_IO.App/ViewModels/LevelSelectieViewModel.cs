@@ -40,14 +40,14 @@ namespace BasisJaar2.ViewModels
             if (level == null) return;
 
             // Sla het geselecteerde level op
-            PracticeSession.GeselecteerdLevel = new Level {Id = 0, Naam = level.Naam, Beschrijving = "Geen beschrijving", Tekst = level.Tekst };
+            PracticeSession.GeselecteerdLevel = new Level {Id = level.Id, Naam = level.Naam, Beschrijving = "Geen beschrijving", Tekst = level.Tekst };
 
             // Navigeer naar oefening
             if (MainPageViewModel.Current != null)
             {
                 var currentPage = MainPageViewModel.Current.SubpageContent;
                 MainPageViewModel.Current.SubpageContent =
-                    new Oefening(PracticeSession.GeselecteerdLevel, currentPage);
+                    new Oefening(PracticeSession.GeselecteerdLevel, false, currentPage);
             }
         }
         private void OpenLeaderboard(Standaardlevel level)

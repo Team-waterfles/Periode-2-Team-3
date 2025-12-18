@@ -11,11 +11,11 @@ namespace Typ_IO.Core.Services
     public class LeaderboardService
     {
         private readonly ILevelleaderboardRepository _leaderboard;
-        LeaderboardService()
+        public LeaderboardService()
         {
             _leaderboard = Application.Current.Windows[0].Page.Handler.MauiContext.Services.GetService<ILevelleaderboardRepository>();
         }
-        public void haal_level(int level_id, int speler_id, int score)
+        public void plaats_score(int level_id, int speler_id, int score)
         {
             int topscore = _leaderboard.GetScoreAsync(level_id, speler_id).Result;
             if (topscore >= score) { return; }
