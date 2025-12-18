@@ -38,6 +38,22 @@ namespace Typ_IO.Core.Data
             cmd.Parameters.AddWithValue("$speler_id", speler_level.SpelerId);
             await cmd.ExecuteNonQueryAsync(ct);
         }
+        public async Task<int> GetScoreAsync(int level_id, int speler_id, CancellationToken ct = default)
+        {
+            using var conn = await _factory.CreateOpenConnectionAsync();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "SELECT Topscore FROM SpelerLevel WHERE LevelId=$level_id AND SpelerId=$speler_id;";
+            cmd.Parameters.AddWithValue("$level_id", level_id);
+            cmd.Parameters.AddWithValue("$speler_id", level_id);
+            using var reader = await cmd.ExecuteReaderAsync(ct);
+
+            int score = 0;
+            while (await reader.ReadAsync(ct))
+            {
+                score = reader.GetInt32(0);
+            }
+            return score;
+        }
         public async Task<List<LevelScore>> GetLeaderboardAsync(int level_id, CancellationToken ct = default)
         {
             using var conn = await _factory.CreateOpenConnectionAsync();
