@@ -5,7 +5,9 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-    <VerticalStackLayout Padding="20" Spacing="20">
+    <ScrollView>
+
+        <VerticalStackLayout Padding="20" Spacing="20">
 
         <!-- Terugknop linksboven -->
         <Border StrokeThickness="0"
@@ -48,14 +50,39 @@
                                    FontSize="20"
                                    FontAttributes="Bold" />
 
-                            <Label Text="{Binding Beschrijving}"
-                                   FontSize="14"
-                                   TextColor="Gray" />
+                            <Label FontSize="13"
+                                   TextColor="Gray">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding Naam}" Value="Testlevel1">
+                                        <Setter Property="Text" Value="Een korte tekst om mee te beginnen" />
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Label" Binding="{Binding Naam}" Value="Testlevel2">
+                                        <Setter Property="Text" Value="Test je basis typsnelheid" />
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Label" Binding="{Binding Naam}" Value="Testlevel3">
+                                        <Setter Property="Text" Value="Voor als je wat verder bent" />
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Label" Binding="{Binding Naam}" Value="Woorden">
+                                        <Setter Property="Text" Value="Oefen met losse woorden" />
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Label" Binding="{Binding Naam}" Value="Complexere combinaties">
+                                        <Setter Property="Text" Value="Korte zinnen en interpunctie" />
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Label" Binding="{Binding Naam}" Value="Volledige zinnen">
+                                        <Setter Property="Text" Value="Lange teksten voor gevorderden" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
 
-                            <Button Text="Start"
+                            <HorizontalStackLayout Spacing="5">
+                                <Button Text="Start" MinimumWidthRequest="500"
                                     Command="{Binding BindingContext.StartLevelCommand, Source={x:Reference Root}}"
                                     CommandParameter="{Binding}" />
+                                <Button Text="Leaderboard" MinimumWidthRequest="500"
+                                    Command="{Binding BindingContext.OpenLeaderboardCommand, Source={x:Reference Root}}"
+                                    CommandParameter="{Binding}" />
 
+                            </HorizontalStackLayout>
                         </VerticalStackLayout>
 
                     </Frame>
@@ -64,4 +91,6 @@
         </CollectionView>
 
     </VerticalStackLayout>
+        </ScrollView>
+
 </ContentView>

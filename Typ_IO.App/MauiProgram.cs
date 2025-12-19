@@ -1,4 +1,4 @@
-﻿using System.Reflection.PortableExecutable;
+using System.Reflection.PortableExecutable;
 using BasisJaar2.Helpers;
 using BasisJaar2.ViewModels;
 using BasisJaar2.Views;
@@ -33,6 +33,8 @@ namespace BasisJaar2
 
             builder.Services.AddScoped<IStandaardlevelRepository, StandaardlevelRepository>();
             builder.Services.AddScoped<IOefenlevelRepository, OefenlevelRepository>();
+            builder.Services.AddScoped<ISpelerRepository, SpelerRepository>();
+            builder.Services.AddScoped<ILevelleaderboardRepository, LevelleaderboardRepository>();
 
 #if DEBUG
             builder.Logging.AddDebug();
@@ -56,8 +58,14 @@ namespace BasisJaar2
 
             return app;
         }
+        
         private static async Task SeedAsync(IServiceProvider sp)
         {
+            var standaardlevelrepository = sp.GetRequiredService<IStandaardlevelRepository>();
+            var oefenlevelrepository = sp.GetRequiredService<IOefenlevelRepository>();
+            var speler_repository = sp.GetRequiredService<ISpelerRepository>();
+            var levelleaderboard_repository = sp.GetRequiredService<ILevelleaderboardRepository>();
+
             Standaardlevel[] standaardlevels = [
                 new Standaardlevel {Moeilijkheidsgraad = 1, Naam = "Testlevel1", Tekst = "Pa's wijze lynx bezag vroom het fikse aquaduct" },
                 new Standaardlevel {Moeilijkheidsgraad = 1, Naam = "Testlevel2", Tekst = "Typ deze zin zorgvuldig om je snelheid te testen" },
@@ -67,15 +75,66 @@ namespace BasisJaar2
                 new Standaardlevel {Moeilijkheidsgraad = 3, Naam = "Volledige zinnen", Tekst = "Dit is een uitgebreide typoefening voor gevorderde gebruikers. Typen is een belangrijke vaardigheid in de moderne wereld. Of je nu student bent, professional of hobbyist, goede typvaardigheden maken je werk een stuk efficiënter. Door regelmatig te oefenen met verschillende soorten teksten, verbeter je niet alleen je snelheid maar ook je nauwkeurigheid. Muziek en ritme kunnen helpen om je typritme te verbeteren en het oefenen aangenamer te maken." }];
             await SeedStandaardlevelAsync(sp.GetRequiredService<IStandaardlevelRepository>(), standaardlevels);
 
-            Oefenlevel[] oefenlevels = [
-                new Oefenlevel {Id = 0, Naam = "2 vingers", Letteropties = " fj" },
-                new Oefenlevel {Id = 1, Naam = "4 vingers", Letteropties = " fjdke" },
-                new Oefenlevel {Id = 2, Naam = "6 vingers", Letteropties = " fjdkewslo" },
-                new Oefenlevel {Id = 3, Naam = "8 vingers", Letteropties = " ;fjdkewsloa" },
-                new Oefenlevel {Id = 4, Naam = "letters bovenste rij", Letteropties = " qwertyuiop" },
-                new Oefenlevel {Id = 5, Naam = "10 vingers", Letteropties = " ;qwertyuiopasdfghjklzxcvbnm" }];
+            Oefenlevel[] oefenlevels =[
+             new Oefenlevel { Id = 0, Naam = "2 vingers", Letteropties = " fj" },
+             new Oefenlevel { Id = 1, Naam = "4 vingers", Letteropties = " fjdk" },
+             new Oefenlevel { Id = 2, Naam = "6 vingers", Letteropties = " fjdkwslo" },
+             new Oefenlevel { Id = 3, Naam = "8 vingers", Letteropties = " asdfjkl;" },
+             new Oefenlevel { Id = 4, Naam = "bovenste rij", Letteropties = " qwertyuiop" },
+             new Oefenlevel { Id = 5, Naam = "onderste rij", Letteropties = " zxcvbnm" },
+             new Oefenlevel { Id = 6, Naam = "letters (alles)", Letteropties = " qwertyuiopasdfghjklzxcvbnm" },
+             new Oefenlevel { Id = 7, Naam = "letters + ;", Letteropties = " ;qwertyuiopasdfghjklzxcvbnm" },
+             new Oefenlevel { Id = 8, Naam = "woorden (mix)", Letteropties = " qwertyuiopasdfghjklzxcvbnm" },
+             new Oefenlevel { Id = 9, Naam = "moeilijke mix", Letteropties = " ;qwertyuiopasdfghjklzxcvbnm" },
+];
+
             await SeedOefenlevelAsync(sp.GetRequiredService<IOefenlevelRepository>(), oefenlevels);
+
+            if ((await speler_repository.ListAsync()).Count == 0)
+            {
+                Speler[] spelers = [
+                    new Speler {Naam = "Jij!" },
+                    new Speler {Naam = "De beste speler" },
+                    new Speler {Naam = "Foutontwijker" },
+                    new Speler {Naam = "De Typraket" },
+                    new Speler {Naam = "Typkampioen" },
+                    new Speler {Naam = "De typpolitie" },
+                    new Speler {Naam = "Ikben200%" },
+                    new Speler {Naam = "De letterfabriek" },
+                    new Speler {Naam = "Typende typer" },
+                    new Speler {Naam = "123Typer" }];
+
+                foreach (Speler speler in spelers)
+                {
+                    await speler_repository.AddAsync(speler);
+                }
+            }
+
+            if ((await levelleaderboard_repository.GetLeaderboardAsync(1)).Count == 0)
+            {
+                SpelerLevel[] speler_level_lijst = [
+                    new SpelerLevel {LevelId = 1, SpelerId = 2, TopScore = 1000 },
+                    new SpelerLevel {LevelId = 1, SpelerId = 3, TopScore = 500 },
+                    new SpelerLevel {LevelId = 1, SpelerId = 4, TopScore = 300 },
+                    new SpelerLevel {LevelId = 1, SpelerId = 5, TopScore = 250 },
+                    new SpelerLevel {LevelId = 1, SpelerId = 6, TopScore = 200 },
+                    new SpelerLevel {LevelId = 1, SpelerId = 7, TopScore = 190 },
+                    new SpelerLevel {LevelId = 1, SpelerId = 8, TopScore = 190 },
+                    new SpelerLevel {LevelId = 1, SpelerId = 9, TopScore = 160 },
+                    new SpelerLevel {LevelId = 1, SpelerId = 10, TopScore = 150 },
+                    new SpelerLevel {LevelId = 2, SpelerId = 2, TopScore = 100 },
+                    new SpelerLevel {LevelId = 2, SpelerId = 3, TopScore = 999 },
+                    new SpelerLevel {LevelId = 2, SpelerId = 4, TopScore = 567 },
+                    new SpelerLevel {LevelId = 3, SpelerId = 2, TopScore = 945 },
+                    new SpelerLevel {LevelId = 3, SpelerId = 3, TopScore = 123 }];
+
+                foreach (SpelerLevel speler_level in speler_level_lijst)
+                {
+                    await levelleaderboard_repository.AddAsync(speler_level);
+                }
+            }
         }
+        
         private static async Task SeedStandaardlevelAsync(IStandaardlevelRepository levelrepository, Standaardlevel[] levels)
         {
             List<Standaardlevel> levels_in_database = levelrepository.ListAsync().Result;
@@ -95,6 +154,7 @@ namespace BasisJaar2
                 }
             }
         }
+        
         private static async Task SeedOefenlevelAsync(IOefenlevelRepository levelrepository, Oefenlevel[] levels)
         {
             foreach (Oefenlevel level in levels)
