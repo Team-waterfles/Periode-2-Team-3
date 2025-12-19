@@ -28,6 +28,8 @@
             <Frame BackgroundColor="White" Padding="10" CornerRadius="5" BorderColor="Gray">
                 <Label FormattedText="{Binding FormattedInvoer}" FontFamily="CourierNew" FontSize="18" />
             </Frame>
+            <!-- Foutmelding -->
+            <Label Text="Je hebt een fout gemaakt. Doe backspace om je fout te verbeteren." TextColor="Red" FontAttributes="Bold" HorizontalOptions="Center" IsVisible="{Binding HeeftFout}"/>
             <!-- Knoppen -->
             <HorizontalStackLayout HorizontalOptions="Center" Spacing="20">
                 <Button Text="▶ Start" Clicked="Start_Clicked" BackgroundColor="Green" TextColor="White" FontSize="18" WidthRequest="120" HeightRequest="50" />

@@ -15,6 +15,16 @@ namespace BasisJaar2.ViewModels
         private readonly Stopwatch _stopwatch;
         private bool _timerLoopt;
         private int _firstErrorIndex = -1;
+        private bool _heeftFout;
+        public bool HeeftFout
+        {
+            get => _heeftFout;
+            set
+            {
+                _heeftFout = value;
+                OnPropertyChanged(nameof(HeeftFout));
+            }
+        }
 
     private List<char> _fouten = new List<char>();
         public IReadOnlyList<char> Fouten => _fouten.AsReadOnly();
@@ -160,6 +170,7 @@ namespace BasisJaar2.ViewModels
                 _firstErrorIndex = Invoer.Length;
                 _fouten.Add(c);
                 TotaalFouten = _fouten.Count;
+                HeeftFout = true;
             }
 
             Invoer += c;
@@ -176,7 +187,10 @@ namespace BasisJaar2.ViewModels
 
             Invoer = Invoer.Substring(0, Invoer.Length - 1);
             if (_firstErrorIndex >= Invoer.Length)
+            {
                 _firstErrorIndex = -1;
+                HeeftFout = false;
+            }
 
             UpdateFormattedInvoer();
         }
