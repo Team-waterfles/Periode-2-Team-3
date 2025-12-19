@@ -319,6 +319,8 @@ namespace BasisJaar2.ViewModels
             }
 
             ResultaatVisible = true;
+
+            ShowSuggestieLevelKnop = _fouten.Count > 0;
         }
 
         private int TelWoorden(string tekst)
