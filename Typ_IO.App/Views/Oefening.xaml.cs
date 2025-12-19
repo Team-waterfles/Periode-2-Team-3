@@ -1,10 +1,8 @@
+﻿using BasisJaar2.Models;
 using BasisJaar2.ViewModels;
-using BasisJaar2.Models;
 using Microsoft.Maui.Controls;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using Typ_IO.Core.Models;
 
 namespace BasisJaar2.Views
 {
@@ -18,15 +16,10 @@ namespace BasisJaar2.Views
 
             _previousPage = previousPage;
 
-            string voorbeeldTekst = level.Tekst;
-
             var vm = new OefeningViewModel(this.Dispatcher, level, is_oefening);
-
-            if (_previousPage is LevelsPage)
-                vm.PracticeModeHints = true;
-
             BindingContext = vm;
 
+            // Zorg dat je meteen kunt typen
             Dispatcher.Dispatch(async () =>
             {
                 await Task.Delay(50);
@@ -53,12 +46,25 @@ namespace BasisJaar2.Views
             ((Editor)sender).Text = VM.Invoer;
         }
 
+        // ✅ Tap anywhere -> focus back to hidden editor
+        private void FocusHiddenEditor_Tapped(object sender, EventArgs e)
+        {
+            HiddenEditor?.Focus();
+        }
+
         private void Start_Clicked(object sender, EventArgs e) => VM?.Start();
         private void Stop_Clicked(object sender, EventArgs e) => VM?.Stop();
         private void Opnieuw_Clicked(object sender, EventArgs e) => VM?.Opnieuw();
 
         private void Terug_Clicked(object sender, EventArgs e)
         {
+            // refresh levels icons/knoppen als je teruggaat
+            if (_previousPage is LevelsPage levelsPage &&
+                levelsPage.BindingContext is LevelsViewModel vm)
+            {
+                vm.RefreshLevelStates();
+            }
+
             if (_previousPage != null && MainPageViewModel.Current != null)
                 MainPageViewModel.Current.SubpageContent = _previousPage;
             else if (MainPageViewModel.Current != null)
