@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -17,7 +17,6 @@ namespace BasisJaar2.ViewModels
         private readonly Stopwatch _stopwatch = new();
         private LeaderboardService _leaderboardService;
 
-        public int AantalKarakters { get; }
         private const int MaxKaraktersPerRegel = 40;
         private const int MinKaraktersLaatsteRegel = 15;
 
@@ -28,19 +27,32 @@ namespace BasisJaar2.ViewModels
         public int SpelerId { get; }
         public int LevelId { get; }
         public bool IsOefening { get; }
-
         public bool PracticeModeHints { get; set; } = false;
 
-        private string _huidigeHint;
+        private readonly List<(int Index, char Getypt, char Verwacht)> _fouten = new();
+        private int _firstErrorIndex = -1;
+        private bool _timerLoopt;
+
+        private string _huidigeHint = "";
         public string HuidigeHint
         {
             get => _huidigeHint;
             set { _huidigeHint = value; OnPropertyChanged(nameof(HuidigeHint)); }
         }
 
-        private readonly List<(int Index, char Getypt, char Verwacht)> _fouten = new();
-        private int _firstErrorIndex = -1;
-        private bool _timerLoopt;
+        private string _currentLetterImage;
+        public string CurrentLetterImage
+        {
+            get => _currentLetterImage;
+            set
+            {
+                _currentLetterImage = value;
+                OnPropertyChanged(nameof(CurrentLetterImage));
+                OnPropertyChanged(nameof(HasCurrentLetterImage));
+            }
+        }
+
+        public bool HasCurrentLetterImage => !string.IsNullOrEmpty(CurrentLetterImage);
 
         private readonly Dictionary<char, string> _vingerHints = new()
         {
@@ -80,16 +92,14 @@ namespace BasisJaar2.ViewModels
             _leaderboardService = new LeaderboardService();
 
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
-            VoorbeeldTekst = level.Tekst;
+            VoorbeeldTekst = level?.Tekst ?? "";
             SpelerId = 1;
-            LevelId = level.Id;
+            LevelId = level?.Id ?? 1;
             IsOefening = is_oefening;
 
-            _stopwatch = new Stopwatch();
             Invoer = string.Empty;
 
             Tijd = "00:00";
-            AantalKarakters = 0;
             StartEnabled = true;
             StopEnabled = false;
             ResultaatVisible = false;
@@ -97,7 +107,7 @@ namespace BasisJaar2.ViewModels
 
             BereidRegelsVoor();
             UpdateFormattedRegels();
-            UpdateHint();
+            UpdateHintAndImage();
         }
         #endregion
 
@@ -108,10 +118,10 @@ namespace BasisJaar2.ViewModels
             get => _invoer;
             private set
             {
-                _invoer = value;
+                _invoer = value ?? "";
                 OnPropertyChanged(nameof(Invoer));
                 UpdateFormattedRegels();
-                UpdateHint();
+                UpdateHintAndImage();
             }
         }
 
@@ -157,7 +167,7 @@ namespace BasisJaar2.ViewModels
             private set { _resultaatVisible = value; OnPropertyChanged(nameof(ResultaatVisible)); }
         }
 
-        private string _resultaatTekst;
+        private string _resultaatTekst = "";
         public string ResultaatTekst
         {
             get => _resultaatTekst;
@@ -321,6 +331,8 @@ namespace BasisJaar2.ViewModels
             StartEnabled = true;
             StopEnabled = false;
             ResultaatVisible = false;
+
+            UpdateHintAndImage();
         }
 
         private void StopOefening()
@@ -343,6 +355,13 @@ namespace BasisJaar2.ViewModels
             var woorden = Invoer.Split(' ', StringSplitOptions.RemoveEmptyEntries).Length;
             var wpm = tijd.TotalMinutes > 0 ? Math.Round(woorden / tijd.TotalMinutes, 2) : 0;
 
+            int totalTyped = Invoer?.Length ?? 0;
+            int foutenAantal = _fouten.Count;
+
+            double accuracy = totalTyped > 0
+                ? ((totalTyped - foutenAantal) / (double)totalTyped) * 100.0
+                : 0.0;
+
             string foutenTekst =
                 _fouten.Count == 0
                     ? "Geen fouten"
@@ -350,11 +369,13 @@ namespace BasisJaar2.ViewModels
 
             ResultaatTekst =
                 $"Tijd: {tijd:mm\\:ss}\n" +
+                $"Karakters: {totalTyped}\n" +
                 $"Woorden: {woorden}\n" +
-                $"WPM: {wpm}\n\n" +
+                $"WPM: {wpm}\n" +
+                $"Accuracy: {Math.Round(accuracy, 2)}%\n\n" +
                 foutenTekst;
 
-            // ⭐ Meest gemaakte fout + vingerhint
+            // Meest gemaakte fout + vingerhint
             var meestGemaakteFout = _fouten
                 .GroupBy(f => f.Verwacht)
                 .OrderByDescending(g => g.Count())
@@ -366,14 +387,15 @@ namespace BasisJaar2.ViewModels
 
                 if (_vingerHints.TryGetValue(foutChar, out string hint))
                 {
-                    ResultaatTekst +=
-                        $"Tip: gebruik {hint}";
+                    ResultaatTekst += $"\n\nTip: gebruik {hint}";
                 }
             }
 
-            bool foutenOk = _fouten.Count <= (AantalKarakters / 100.0) * 10;
+            bool volledigGetypt = totalTyped == VoorbeeldTekst.Length;
+            bool accuracyOk = accuracy >= 90.0;
             bool wpmOk = wpm >= 20;
-            bool levelGehaald = foutenOk && wpmOk;
+
+            bool levelGehaald = volledigGetypt && accuracyOk && wpmOk;
 
             if (levelGehaald)
             {
@@ -385,27 +407,73 @@ namespace BasisJaar2.ViewModels
             }
             else
             {
-                ResultaatTekst += "\n\nLevel NIET gehaald.";
+                if (!volledigGetypt) ResultaatTekst += "\n\nNiet gehaald: tekst niet afgemaakt.";
+                else if (!accuracyOk) ResultaatTekst += "\n\nNiet gehaald: accuracy minimaal 90%.";
+                else if (!wpmOk) ResultaatTekst += "\n\nNiet gehaald: te weinig WPM.";
             }
 
             ResultaatVisible = true;
+
+            // Hints uit aan het einde
+            HuidigeHint = "";
+            CurrentLetterImage = null;
         }
         #endregion
 
         #region Hints
-        private void UpdateHint()
+        private void UpdateHintAndImage()
         {
-            if (!PracticeModeHints || Invoer.Length >= VoorbeeldTekst.Length)
+            if (string.IsNullOrEmpty(VoorbeeldTekst))
             {
-                HuidigeHint = string.Empty;
+                HuidigeHint = "";
+                CurrentLetterImage = null;
                 return;
             }
 
-            char volgende = VoorbeeldTekst[Invoer.Length];
-            if (_vingerHints.TryGetValue(volgende, out string hint))
-                HuidigeHint = hint;
+            int index = Invoer?.Length ?? 0;
+            if (index >= VoorbeeldTekst.Length)
+            {
+                HuidigeHint = "";
+                CurrentLetterImage = null;
+                return;
+            }
+
+            char volgende = VoorbeeldTekst[index];
+
+            // Hint tekst (alleen in practice mode)
+            if (PracticeModeHints)
+            {
+                HuidigeHint = _vingerHints.TryGetValue(volgende, out var hint)
+                    ? hint
+                    : "Gebruik de juiste vinger voor deze toets";
+            }
             else
-                HuidigeHint = $"Volgende toets: '{volgende}'";
+            {
+                HuidigeHint = "";
+            }
+
+            // Afbeelding: a.png..z.png + spatie.png
+            char nextLower = char.ToLower(volgende);
+
+            if (nextLower >= 'a' && nextLower <= 'z')
+            {
+                CurrentLetterImage = $"{nextLower}.png";
+                return;
+            }
+
+            if (volgende == ' ')
+            {
+                CurrentLetterImage = "spatie.png";
+                return;
+            }
+
+            if (volgende == ';')
+            {
+                CurrentLetterImage = "puntkomma.png";
+                return;
+            }
+
+            CurrentLetterImage = null;
         }
         #endregion
 
