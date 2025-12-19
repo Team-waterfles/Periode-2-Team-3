@@ -1,11 +1,11 @@
+﻿using BasisJaar2.Models;
+using Microsoft.Maui.Controls;
+using Microsoft.Maui.Dispatching;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using Microsoft.Maui.Controls;
-using Microsoft.Maui.Dispatching;
-using BasisJaar2.Models;
 using Typ_IO.Core.Models;
 using Typ_IO.Core.Services;
 
@@ -15,7 +15,10 @@ namespace BasisJaar2.ViewModels
     {
         private readonly IDispatcher _dispatcher;
         private readonly Stopwatch _stopwatch = new();
-        private LeaderboardService _leaderboardService;
+        private readonly LeaderboardService _leaderboardService = new();
+
+        private bool _timerLoopt;
+        private int _firstErrorIndex = -1;
 
         private const int MaxKaraktersPerRegel = 40;
         private const int MinKaraktersLaatsteRegel = 15;
@@ -23,28 +26,32 @@ namespace BasisJaar2.ViewModels
         private readonly List<string> _regels = new();
         private int _huidigeRegelIndex;
 
+        private readonly List<(int Index, char Getypt, char Verwacht)> _fouten = new();
+
         public string VoorbeeldTekst { get; }
         public int SpelerId { get; }
         public int LevelId { get; }
         public bool IsOefening { get; }
-        public bool PracticeModeHints { get; set; } = false;
 
-        private readonly List<(int Index, char Getypt, char Verwacht)> _fouten = new();
-        private int _firstErrorIndex = -1;
-        private bool _timerLoopt;
+        private int _aantalKarakters;
+        public int AantalKarakters
+        {
+            get => _aantalKarakters;
+            private set { _aantalKarakters = value; OnPropertyChanged(nameof(AantalKarakters)); }
+        }
 
         private string _huidigeHint = "";
         public string HuidigeHint
         {
             get => _huidigeHint;
-            set { _huidigeHint = value; OnPropertyChanged(nameof(HuidigeHint)); }
+            private set { _huidigeHint = value; OnPropertyChanged(nameof(HuidigeHint)); }
         }
 
         private string _currentLetterImage;
         public string CurrentLetterImage
         {
             get => _currentLetterImage;
-            set
+            private set
             {
                 _currentLetterImage = value;
                 OnPropertyChanged(nameof(CurrentLetterImage));
@@ -54,74 +61,19 @@ namespace BasisJaar2.ViewModels
 
         public bool HasCurrentLetterImage => !string.IsNullOrEmpty(CurrentLetterImage);
 
-        private readonly Dictionary<char, string> _vingerHints = new()
-        {
-            { 'f', "Linker wijsvinger (F)" }, { 'F', "Linker wijsvinger (F)" },
-            { 'j', "Rechter wijsvinger (J)" }, { 'J', "Rechter wijsvinger (J)" },
-            { 'd', "Linker middelvinger (D)" }, { 'D', "Linker middelvinger (D)" },
-            { 'k', "Rechter middelvinger (K)" }, { 'K', "Rechter middelvinger (K)" },
-            { 's', "Linker ringvinger (S)" }, { 'S', "Linker ringvinger (S)" },
-            { 'l', "Rechter ringvinger (L)" }, { 'L', "Rechter ringvinger (L)" },
-            { 'a', "Linker pink (A)" }, { 'A', "Linker pink (A)" },
-            { ';', "Rechter pink (;)" },
-            { 'g', "Linker wijsvinger (G)" }, { 'G', "Linker wijsvinger (G)" },
-            { 'h', "Rechter wijsvinger (H)" }, { 'H', "Rechter wijsvinger (H)" },
-            { 't', "Linker wijsvinger (T)" }, { 'T', "Linker wijsvinger (T)" },
-            { 'y', "Rechter wijsvinger (Y)" }, { 'Y', "Rechter wijsvinger (Y)" },
-            { 'r', "Linker wijsvinger (R)" }, { 'R', "Linker wijsvinger (R)" },
-            { 'u', "Rechter wijsvinger (U)" }, { 'U', "Rechter wijsvinger (U)" },
-            { 'e', "Linker middelvinger (E)" }, { 'E', "Linker middelvinger (E)" },
-            { 'i', "Rechter middelvinger (I)" }, { 'I', "Rechter middelvinger (I)" },
-            { 'w', "Linker ringvinger (W)" }, { 'W', "Linker ringvinger (W)" },
-            { 'o', "Rechter ringvinger (O)" }, { 'O', "Rechter ringvinger (O)" },
-            { 'q', "Linker pink (Q)" }, { 'Q', "Linker pink (Q)" },
-            { 'p', "Rechter pink (P)" }, { 'P', "Rechter pink (P)" },
-            { 'z', "Linker ringvinger (Z)" }, { 'Z', "Linker ringvinger (Z)" },
-            { 'x', "Linker middelvinger (X)" }, { 'X', "Linker middelvinger (X)" },
-            { 'c', "Linker middelvinger (C)" }, { 'C', "Linker middelvinger (C)" },
-            { 'v', "Linker wijsvinger (V)" }, { 'V', "Linker wijsvinger (V)" },
-            { 'b', "Linker wijsvinger / duim (B)" }, { 'B', "Linker wijsvinger / duim (B)" },
-            { 'n', "Rechter wijsvinger (N)" }, { 'N', "Rechter wijsvinger (N)" },
-            { 'm', "Rechter middelvinger (M)" }, { 'M', "Rechter middelvinger (M)" },
-            { ' ', "Spatiebalk (duim)" }
-        };
-
-        #region Constructor
-        public OefeningViewModel(IDispatcher dispatcher, Level level, bool is_oefening)
-        {
-            _leaderboardService = new LeaderboardService();
-
-            _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
-            VoorbeeldTekst = level?.Tekst ?? "";
-            SpelerId = 1;
-            LevelId = level?.Id ?? 1;
-            IsOefening = is_oefening;
-
-            Invoer = string.Empty;
-
-            Tijd = "00:00";
-            StartEnabled = true;
-            StopEnabled = false;
-            ResultaatVisible = false;
-            Started = false;
-
-            BereidRegelsVoor();
-            UpdateFormattedRegels();
-            UpdateHintAndImage();
-        }
-        #endregion
-
-        #region Bindings
         private string _invoer = string.Empty;
         public string Invoer
         {
             get => _invoer;
             private set
             {
-                _invoer = value ?? "";
+                _invoer = value ?? string.Empty;
                 OnPropertyChanged(nameof(Invoer));
+
+                AantalKarakters = _invoer.Length;
+
                 UpdateFormattedRegels();
-                UpdateHintAndImage();
+                UpdateHintAndImage(); // ✅ hint altijd up-to-date
             }
         }
 
@@ -175,9 +127,66 @@ namespace BasisJaar2.ViewModels
         }
 
         public bool Started { get; private set; }
-        #endregion
 
-        #region Regels voorbereiden
+        private readonly Dictionary<char, string> _vingerHints = new()
+        {
+            { 'f', "Linker wijsvinger (F)" }, { 'F', "Linker wijsvinger (F)" },
+            { 'j', "Rechter wijsvinger (J)" }, { 'J', "Rechter wijsvinger (J)" },
+            { 'd', "Linker middelvinger (D)" }, { 'D', "Linker middelvinger (D)" },
+            { 'k', "Rechter middelvinger (K)" }, { 'K', "Rechter middelvinger (K)" },
+            { 's', "Linker ringvinger (S)" }, { 'S', "Linker ringvinger (S)" },
+            { 'l', "Rechter ringvinger (L)" }, { 'L', "Rechter ringvinger (L)" },
+            { 'a', "Linker pink (A)" }, { 'A', "Linker pink (A)" },
+            { ';', "Rechter pink (;)" },
+            { 'g', "Linker wijsvinger (G)" }, { 'G', "Linker wijsvinger (G)" },
+            { 'h', "Rechter wijsvinger (H)" }, { 'H', "Rechter wijsvinger (H)" },
+            { 't', "Linker wijsvinger (T)" }, { 'T', "Linker wijsvinger (T)" },
+            { 'y', "Rechter wijsvinger (Y)" }, { 'Y', "Rechter wijsvinger (Y)" },
+            { 'r', "Linker wijsvinger (R)" }, { 'R', "Linker wijsvinger (R)" },
+            { 'u', "Rechter wijsvinger (U)" }, { 'U', "Rechter wijsvinger (U)" },
+            { 'e', "Linker middelvinger (E)" }, { 'E', "Linker middelvinger (E)" },
+            { 'i', "Rechter middelvinger (I)" }, { 'I', "Rechter middelvinger (I)" },
+            { 'w', "Linker ringvinger (W)" }, { 'W', "Linker ringvinger (W)" },
+            { 'o', "Rechter ringvinger (O)" }, { 'O', "Rechter ringvinger (O)" },
+            { 'q', "Linker pink (Q)" }, { 'Q', "Linker pink (Q)" },
+            { 'p', "Rechter pink (P)" }, { 'P', "Rechter pink (P)" },
+            { 'z', "Linker ringvinger (Z)" }, { 'Z', "Linker ringvinger (Z)" },
+            { 'x', "Linker middelvinger (X)" }, { 'X', "Linker middelvinger (X)" },
+            { 'c', "Linker middelvinger (C)" }, { 'C', "Linker middelvinger (C)" },
+            { 'v', "Linker wijsvinger (V)" }, { 'V', "Linker wijsvinger (V)" },
+            { 'b', "Linker wijsvinger / duim (B)" }, { 'B', "Linker wijsvinger / duim (B)" },
+            { 'n', "Rechter wijsvinger (N)" }, { 'N', "Rechter wijsvinger (N)" },
+            { 'm', "Rechter middelvinger (M)" }, { 'M', "Rechter middelvinger (M)" },
+            { ' ', "Spatiebalk (duim)" }
+        };
+
+        public OefeningViewModel(IDispatcher dispatcher, Level level, bool is_oefening)
+        {
+            _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
+            if (level == null) throw new ArgumentNullException(nameof(level));
+
+            VoorbeeldTekst = level.Tekst ?? "";
+            SpelerId = 1;
+            LevelId = level.Id;
+            IsOefening = is_oefening;
+
+            Tijd = "00:00";
+            AantalKarakters = 0;
+
+            StartEnabled = true;
+            StopEnabled = false;
+            ResultaatVisible = false;
+            Started = false;
+
+            BereidRegelsVoor();
+            Invoer = string.Empty;
+
+            // ✅ hint direct zichtbaar zodra je in de oefening komt
+            UpdateFormattedRegels();
+            UpdateHintAndImage();
+        }
+
+        #region Regels + Rendering
         private void BereidRegelsVoor()
         {
             _regels.Clear();
@@ -216,13 +225,18 @@ namespace BasisJaar2.ViewModels
                 idx += _regels[i].Length;
             return idx;
         }
-        #endregion
 
-        #region Rendering
         private void UpdateFormattedRegels()
         {
             var voorbeeld = new FormattedString();
             var invoer = new FormattedString();
+
+            if (_regels.Count == 0)
+            {
+                FormattedVoorbeeldTekst = new FormattedString();
+                FormattedInvoer = new FormattedString();
+                return;
+            }
 
             int eerste = Math.Max(0, _huidigeRegelIndex - 1);
             int laatste = Math.Min(_regels.Count - 1, _huidigeRegelIndex + 1);
@@ -235,6 +249,7 @@ namespace BasisJaar2.ViewModels
                 for (int i = 0; i < regel.Length; i++)
                 {
                     int index = start + i;
+
                     Color kleur = index < Invoer.Length
                         ? index == _firstErrorIndex ? Colors.Red : Colors.Gray
                         : Colors.Black;
@@ -276,8 +291,12 @@ namespace BasisJaar2.ViewModels
 
             Invoer += c;
 
-            if (Invoer.Length > StartIndexVanRegel(_huidigeRegelIndex) + _regels[_huidigeRegelIndex].Length)
-                _huidigeRegelIndex = Math.Min(_huidigeRegelIndex + 1, _regels.Count - 1);
+            if (_regels.Count > 0)
+            {
+                int einde = StartIndexVanRegel(_huidigeRegelIndex) + _regels[_huidigeRegelIndex].Length;
+                if (Invoer.Length > einde)
+                    _huidigeRegelIndex = Math.Min(_huidigeRegelIndex + 1, _regels.Count - 1);
+            }
 
             if (Invoer.Length == VoorbeeldTekst.Length)
                 StopOefening();
@@ -312,6 +331,9 @@ namespace BasisJaar2.ViewModels
                 Tijd = _stopwatch.Elapsed.ToString(@"mm\:ss");
                 return true;
             });
+
+            // ✅ zet hint nog eens bij start
+            UpdateHintAndImage();
         }
 
         public void Stop() => StopOefening();
@@ -320,8 +342,8 @@ namespace BasisJaar2.ViewModels
         {
             _stopwatch.Reset();
             Tijd = "00:00";
-            Invoer = string.Empty;
 
+            Invoer = string.Empty;
             _fouten.Clear();
             _firstErrorIndex = -1;
             _huidigeRegelIndex = 0;
@@ -332,6 +354,7 @@ namespace BasisJaar2.ViewModels
             StopEnabled = false;
             ResultaatVisible = false;
 
+            UpdateFormattedRegels();
             UpdateHintAndImage();
         }
 
@@ -344,6 +367,7 @@ namespace BasisJaar2.ViewModels
 
             StartEnabled = true;
             StopEnabled = false;
+
             ToonResultaat();
         }
         #endregion
@@ -352,8 +376,6 @@ namespace BasisJaar2.ViewModels
         private void ToonResultaat()
         {
             var tijd = _stopwatch.Elapsed;
-            var woorden = Invoer.Split(' ', StringSplitOptions.RemoveEmptyEntries).Length;
-            var wpm = tijd.TotalMinutes > 0 ? Math.Round(woorden / tijd.TotalMinutes, 2) : 0;
 
             int totalTyped = Invoer?.Length ?? 0;
             int foutenAantal = _fouten.Count;
@@ -362,34 +384,16 @@ namespace BasisJaar2.ViewModels
                 ? ((totalTyped - foutenAantal) / (double)totalTyped) * 100.0
                 : 0.0;
 
-            string foutenTekst =
-                _fouten.Count == 0
-                    ? "Geen fouten"
-                    : $"Fouten ({_fouten.Count}): {string.Join(", ", _fouten.Select(f => f.Verwacht))}";
+            int woorden = Invoer.Split(' ', StringSplitOptions.RemoveEmptyEntries).Length;
+            var wpm = tijd.TotalMinutes > 0 ? Math.Round(woorden / tijd.TotalMinutes, 2) : 0;
 
             ResultaatTekst =
                 $"Tijd: {tijd:mm\\:ss}\n" +
-                $"Karakters: {totalTyped}\n" +
+                $"Karakters: {AantalKarakters}\n" +
                 $"Woorden: {woorden}\n" +
                 $"WPM: {wpm}\n" +
-                $"Accuracy: {Math.Round(accuracy, 2)}%\n\n" +
-                foutenTekst;
-
-            // Meest gemaakte fout + vingerhint
-            var meestGemaakteFout = _fouten
-                .GroupBy(f => f.Verwacht)
-                .OrderByDescending(g => g.Count())
-                .FirstOrDefault();
-
-            if (meestGemaakteFout != null)
-            {
-                char foutChar = meestGemaakteFout.Key;
-
-                if (_vingerHints.TryGetValue(foutChar, out string hint))
-                {
-                    ResultaatTekst += $"\n\nTip: gebruik {hint}";
-                }
-            }
+                $"Accuracy: {Math.Round(accuracy, 2)}%\n" +
+                $"Fouten: {foutenAantal}";
 
             bool volledigGetypt = totalTyped == VoorbeeldTekst.Length;
             bool accuracyOk = accuracy >= 90.0;
@@ -400,6 +404,7 @@ namespace BasisJaar2.ViewModels
             if (levelGehaald)
             {
                 PracticeSession.MarkLevelGehaald(LevelId);
+
                 if (!IsOefening)
                     _leaderboardService.plaats_score(LevelId, SpelerId, 900);
 
@@ -407,52 +412,33 @@ namespace BasisJaar2.ViewModels
             }
             else
             {
-                if (!volledigGetypt) ResultaatTekst += "\n\nNiet gehaald: tekst niet afgemaakt.";
-                else if (!accuracyOk) ResultaatTekst += "\n\nNiet gehaald: accuracy minimaal 90%.";
-                else if (!wpmOk) ResultaatTekst += "\n\nNiet gehaald: te weinig WPM.";
+                ResultaatTekst += "\n\nLevel NIET gehaald.";
             }
 
             ResultaatVisible = true;
 
-            // Hints uit aan het einde
+            // einde -> hints uit
             HuidigeHint = "";
             CurrentLetterImage = null;
         }
         #endregion
 
-        #region Hints
+        #region Hint + Image (ALTIJD AAN)
         private void UpdateHintAndImage()
         {
-            if (string.IsNullOrEmpty(VoorbeeldTekst))
+            if (string.IsNullOrEmpty(VoorbeeldTekst) || Invoer.Length >= VoorbeeldTekst.Length)
             {
                 HuidigeHint = "";
                 CurrentLetterImage = null;
                 return;
             }
 
-            int index = Invoer?.Length ?? 0;
-            if (index >= VoorbeeldTekst.Length)
-            {
-                HuidigeHint = "";
-                CurrentLetterImage = null;
-                return;
-            }
+            char volgende = VoorbeeldTekst[Invoer.Length];
 
-            char volgende = VoorbeeldTekst[index];
+            HuidigeHint = _vingerHints.TryGetValue(volgende, out var hint)
+                ? hint
+                : $"Volgende toets: '{volgende}'";
 
-            // Hint tekst (alleen in practice mode)
-            if (PracticeModeHints)
-            {
-                HuidigeHint = _vingerHints.TryGetValue(volgende, out var hint)
-                    ? hint
-                    : "Gebruik de juiste vinger voor deze toets";
-            }
-            else
-            {
-                HuidigeHint = "";
-            }
-
-            // Afbeelding: a.png..z.png + spatie.png
             char nextLower = char.ToLower(volgende);
 
             if (nextLower >= 'a' && nextLower <= 'z')

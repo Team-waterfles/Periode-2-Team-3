@@ -1,4 +1,4 @@
-using BasisJaar2.Models;
+﻿using BasisJaar2.Models;
 using BasisJaar2.ViewModels;
 using Microsoft.Maui.Controls;
 using System;
@@ -13,11 +13,13 @@ namespace BasisJaar2.Views
         public Oefening(Level level, bool is_oefening, ContentView previousPage = null)
         {
             InitializeComponent();
+
             _previousPage = previousPage;
-            string voorbeeldTekst = level.Tekst;
+
             var vm = new OefeningViewModel(this.Dispatcher, level, is_oefening);
- 
             BindingContext = vm;
+
+            // Zorg dat je meteen kunt typen
             Dispatcher.Dispatch(async () =>
             {
                 await Task.Delay(50);
@@ -30,14 +32,24 @@ namespace BasisJaar2.Views
         private void HiddenEditor_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (VM == null) return;
+
             string nieuweTekst = e.NewTextValue ?? string.Empty;
+
             if (!VM.Started && nieuweTekst.Length > 0)
                 VM.Start();
+
             if (nieuweTekst.Length < VM.Invoer.Length)
                 VM.VerwijderLaatste();
             else if (nieuweTekst.Length > VM.Invoer.Length)
                 VM.VoegKarakterToe(nieuweTekst[^1]);
+
             ((Editor)sender).Text = VM.Invoer;
+        }
+
+        // ✅ Tap anywhere -> focus back to hidden editor
+        private void FocusHiddenEditor_Tapped(object sender, EventArgs e)
+        {
+            HiddenEditor?.Focus();
         }
 
         private void Start_Clicked(object sender, EventArgs e) => VM?.Start();
@@ -52,6 +64,7 @@ namespace BasisJaar2.Views
             {
                 vm.RefreshLevelStates();
             }
+
             if (_previousPage != null && MainPageViewModel.Current != null)
                 MainPageViewModel.Current.SubpageContent = _previousPage;
             else if (MainPageViewModel.Current != null)

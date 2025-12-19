@@ -4,7 +4,12 @@
              x:Class="BasisJaar2.Views.Oefening">
 
     <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="20">
+        <VerticalStackLayout Padding="20" Spacing="16">
+
+            <!-- Tap anywhere -> focus input -->
+            <VerticalStackLayout.GestureRecognizers>
+                <TapGestureRecognizer Tapped="FocusHiddenEditor_Tapped" />
+            </VerticalStackLayout.GestureRecognizers>
 
             <!-- Titel -->
             <Label Text="Typ Oefening"
@@ -23,20 +28,20 @@
             <!-- Voorbeeldtekst -->
             <Frame BorderColor="Black"
                    CornerRadius="10"
-                   Padding="15"
+                   Padding="12"
                    BackgroundColor="White"
                    HorizontalOptions="Center"
-                   WidthRequest="600"
-                   HeightRequest="200">
+                   WidthRequest="500"
+                   HeightRequest="80">
                 <Label FormattedText="{Binding FormattedVoorbeeldTekst}"
                        FontSize="18"
                        FontFamily="CourierNew"
                        LineBreakMode="WordWrap"
-                       HorizontalOptions="Center"
+                       HorizontalOptions="Start"
                        VerticalOptions="Center" />
             </Frame>
 
-            <!-- Onzichtbare input -->
+            <!-- ✅ Onzichtbare input (verplicht om te typen) -->
             <Editor x:Name="HiddenEditor"
                     TextChanged="HiddenEditor_TextChanged"
                     Opacity="0"
@@ -44,36 +49,38 @@
                     WidthRequest="1"
                     AutoSize="TextChanges" />
 
-            <!-- Invoer -->
-            <Frame BackgroundColor="White"
-                   Padding="10"
-                   CornerRadius="5"
-                   BorderColor="Gray"
-                   HorizontalOptions="Center"
-                   WidthRequest="600"
-                   HeightRequest="200">
-                <Label FormattedText="{Binding FormattedInvoer}"
-                       FontFamily="CourierNew"
-                       FontSize="18"
-                       HorizontalOptions="Center"
-                       VerticalOptions="Center" />
-            </Frame>
-
-            <!-- ✅ Hint: welke vinger voor de volgende toets -->
+            <!-- Hint -->
             <Frame BackgroundColor="LightYellow"
                    Padding="10"
-                   CornerRadius="5"
-                   BorderColor="Orange">
+                   CornerRadius="8"
+                   BorderColor="Orange"
+                   HorizontalOptions="Center"
+                   WidthRequest="500">
                 <Label Text="{Binding HuidigeHint}"
                        FontSize="16"
                        TextColor="DarkOrange"
                        HorizontalOptions="Center" />
             </Frame>
 
-            <!-- ✅ Afbeelding: keyboard + juiste vinger (onder invoer) -->
+            <!-- Invoer -->
+            <Frame BackgroundColor="White"
+                   Padding="10"
+                   CornerRadius="8"
+                   BorderColor="Gray"
+                   HorizontalOptions="Center"
+                   WidthRequest="500"
+                   HeightRequest="80">
+                <Label FormattedText="{Binding FormattedInvoer}"
+                       FontFamily="CourierNew"
+                       FontSize="18"
+                       HorizontalOptions="Start"
+                       VerticalOptions="Center" />
+            </Frame>
+
+            <!-- Afbeelding -->
             <Image Source="{Binding CurrentLetterImage}"
                    IsVisible="{Binding HasCurrentLetterImage}"
-                   HeightRequest="180"
+                   HeightRequest="160"
                    HorizontalOptions="Center"
                    Margin="0,6,0,0"
                    Aspect="AspectFit" />
@@ -99,7 +106,9 @@
                    BorderColor="Green"
                    CornerRadius="10"
                    Padding="20"
-                   BackgroundColor="LightGreen">
+                   BackgroundColor="LightGreen"
+                   HorizontalOptions="Center"
+                   WidthRequest="500">
                 <VerticalStackLayout Spacing="10">
                     <Label Text="Oefening voltooid!"
                            FontSize="24"
