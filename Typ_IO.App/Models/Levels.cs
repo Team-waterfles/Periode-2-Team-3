@@ -4,50 +4,61 @@ namespace BasisJaar2.Models;
 
 public class Level : INotifyPropertyChanged
 {
-    // Extra properties voor oude code (LevelSelectieViewModel)
-    public int Id { get; set; }              // kan gebruikt worden als numeriek id
-    public string Tekst { get; set; } = "";  // optioneel: eigen tekst per level
+    //  Id, Naam, Beschrijving, Tekst, IsUnlocked, IsCompleted
 
-    private string _nummer;
-    private string _naam;
-    private string _beschrijving;
-    private bool _isUnlocked;
-    private bool _isCompleted;
+    public int Id { get; set; }
 
-    public string Nummer
-    {
-        get => _nummer;
-        set
-        {
-            if (_nummer == value) return;
-            _nummer = value;
-            OnPropertyChanged(nameof(Nummer));
-        }
-    }
-
+    private string _naam = "";
     public string Naam
     {
         get => _naam;
         set
         {
             if (_naam == value) return;
-            _naam = value;
+            _naam = value ?? "";
             OnPropertyChanged(nameof(Naam));
         }
     }
 
+    private string _beschrijving = "";
     public string Beschrijving
     {
         get => _beschrijving;
         set
         {
             if (_beschrijving == value) return;
-            _beschrijving = value;
+            _beschrijving = value ?? "";
             OnPropertyChanged(nameof(Beschrijving));
         }
     }
 
-    // Voor UI
+    private string _tekst = "";
+    public string Tekst
+    {
+        get => _tekst;
+        set
+        {
+            if (_tekst == value) return;
+            _tekst = value ?? "";
+            OnPropertyChanged(nameof(Tekst));
+        }
+    }
+
+    // (Bestond al in code 2, mag blijven)
+    private string _nummer = "";
+    public string Nummer
+    {
+        get => _nummer;
+        set
+        {
+            if (_nummer == value) return;
+            _nummer = value ?? "";
+            OnPropertyChanged(nameof(Nummer));
+        }
+    }
+
+    // Voor UI (code 2 had notify + IconSource, dat houden we)
+    private bool _isUnlocked;
     public bool IsUnlocked
     {
         get => _isUnlocked;
@@ -60,6 +71,7 @@ public class Level : INotifyPropertyChanged
         }
     }
 
+    private bool _isCompleted;
     public bool IsCompleted
     {
         get => _isCompleted;
@@ -72,12 +84,6 @@ public class Level : INotifyPropertyChanged
         }
     }
 
-    /// <summary>
-    /// Geeft het icoon voor dit level:
-    /// - completed.png als level gehaald is
-    /// - unlocked.png als level open is
-    /// - locked.png als level nog dicht zit
-    /// </summary>
     public string IconSource =>
         IsCompleted ? "completed.png"
         : IsUnlocked ? "unlocked.png"

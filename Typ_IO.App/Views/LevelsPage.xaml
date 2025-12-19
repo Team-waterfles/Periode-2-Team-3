@@ -31,8 +31,31 @@
                         <Frame Margin="0,8"
                                Padding="12"
                                HasShadow="True"
-                               CornerRadius="15"
-                               BackgroundColor="#1a3c8c">
+                               CornerRadius="15">
+
+                            <!-- ✅ Frame kleur afhankelijk van status -->
+                            <Frame.Style>
+                                <Style TargetType="Frame">
+                                    <!-- default = locked -->
+                                    <Setter Property="BackgroundColor" Value="#6e6e6e"/>
+
+                                    <Style.Triggers>
+                                        <!-- unlocked = blauw -->
+                                        <DataTrigger TargetType="Frame"
+                                                     Binding="{Binding IsUnlocked}"
+                                                     Value="True">
+                                            <Setter Property="BackgroundColor" Value="#1a3c8c"/>
+                                        </DataTrigger>
+
+                                        <!-- completed = donkerblauw -->
+                                        <DataTrigger TargetType="Frame"
+                                                     Binding="{Binding IsCompleted}"
+                                                     Value="True">
+                                            <Setter Property="BackgroundColor" Value="#0c2e6b"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Frame.Style>
 
                             <Grid ColumnDefinitions="Auto,*"
                                   RowDefinitions="Auto,Auto"
@@ -72,16 +95,20 @@
 
                                     <Button.Style>
                                         <Style TargetType="Button">
+                                            <!-- default = unlocked -->
                                             <Setter Property="BackgroundColor" Value="#0c2e6b"/>
                                             <Setter Property="TextColor" Value="White"/>
                                             <Setter Property="CornerRadius" Value="8"/>
+                                            <Setter Property="IsEnabled" Value="True"/>
 
                                             <Style.Triggers>
+                                                <!-- locked button -->
                                                 <DataTrigger TargetType="Button"
-                                                  Binding="{Binding IsUnlocked}"
-                                                  Value="False">
+                                                             Binding="{Binding IsUnlocked}"
+                                                             Value="False">
                                                     <Setter Property="BackgroundColor" Value="#d3d3d3"/>
                                                     <Setter Property="TextColor" Value="#555"/>
+                                                    <Setter Property="IsEnabled" Value="False"/>
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>

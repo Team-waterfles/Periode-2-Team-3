@@ -5,7 +5,6 @@ using System.Diagnostics;
 using Microsoft.Maui.Dispatching;
 using Microsoft.Maui.Controls;
 using BasisJaar2.Models;
-using BasisJaar2.Views;
 using Typ_IO.Core.Models;
 
 namespace BasisJaar2.ViewModels
@@ -14,10 +13,11 @@ namespace BasisJaar2.ViewModels
     {
         private readonly IDispatcher _dispatcher;
         private readonly Stopwatch _stopwatch;
+
         private bool _timerLoopt;
         private int _firstErrorIndex = -1;
 
-        private List<char> _fouten = new List<char>();
+        private readonly List<char> _fouten = new();
         public IReadOnlyList<char> Fouten => _fouten.AsReadOnly();
 
         private int _totaalFouten;
@@ -30,37 +30,13 @@ namespace BasisJaar2.ViewModels
         public string VoorbeeldTekst { get; }
         public int LevelId { get; }
 
-        // ✅ FIX: PracticeModeHints moet updates triggeren
-        private bool _practiceModeHints = false;
-        public bool PracticeModeHints
-        {
-            get => _practiceModeHints;
-            set
-            {
-                if (_practiceModeHints == value) return;
-                _practiceModeHints = value;
-                OnPropertyChanged(nameof(PracticeModeHints));
-
-                UpdateHint();
-                UpdateLetterImage();
-            }
-        }
-
-        private string _huidigeHint;
+        private string _huidigeHint = "";
         public string HuidigeHint
         {
             get => _huidigeHint;
             set { _huidigeHint = value; OnPropertyChanged(nameof(HuidigeHint)); }
         }
 
-        private FormattedString _formattedVoorbeeldTekst;
-        public FormattedString FormattedVoorbeeldTekst
-        {
-            get => _formattedVoorbeeldTekst;
-            set { _formattedVoorbeeldTekst = value; OnPropertyChanged(nameof(FormattedVoorbeeldTekst)); }
-        }
-
-        // ✅ NIEUW: afbeelding voor de volgende letter/spatie
         private string _currentLetterImage;
         public string CurrentLetterImage
         {
@@ -73,8 +49,21 @@ namespace BasisJaar2.ViewModels
             }
         }
 
-        // ✅ Voor XAML IsVisible
         public bool HasCurrentLetterImage => !string.IsNullOrEmpty(CurrentLetterImage);
+
+        private FormattedString _formattedVoorbeeldTekst;
+        public FormattedString FormattedVoorbeeldTekst
+        {
+            get => _formattedVoorbeeldTekst;
+            set { _formattedVoorbeeldTekst = value; OnPropertyChanged(nameof(FormattedVoorbeeldTekst)); }
+        }
+
+        private FormattedString _formattedInvoer;
+        public FormattedString FormattedInvoer
+        {
+            get => _formattedInvoer;
+            set { _formattedInvoer = value; OnPropertyChanged(nameof(FormattedInvoer)); }
+        }
 
         private readonly Dictionary<char, string> _vingerHints = new()
         {
@@ -111,12 +100,11 @@ namespace BasisJaar2.ViewModels
         public OefeningViewModel(IDispatcher dispatcher, Level level)
         {
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
-            VoorbeeldTekst = level.Tekst;
-            LevelId = level.Id;
+            VoorbeeldTekst = level?.Tekst ?? "";
+            LevelId = level?.Id ?? 1;
 
             _stopwatch = new Stopwatch();
             Invoer = string.Empty;
-            UpdateFormattedInvoer();
 
             Tijd = "00:00";
             AantalKarakters = 0;
@@ -125,24 +113,23 @@ namespace BasisJaar2.ViewModels
             ResultaatVisible = false;
             Started = false;
 
-            UpdateHint();
-            UpdateLetterImage(); // ✅ eerste afbeelding (als PracticeModeHints true is)
+            UpdateFormattedInvoer();
+            UpdateHintAndImage();
         }
 
         public bool Started { get; private set; }
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string naam) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(naam));
 
-        private string _invoer = string.Empty;
+        private string _invoer = "";
         public string Invoer
         {
             get => _invoer;
             set
             {
-                _invoer = value;
+                _invoer = value ?? "";
                 OnPropertyChanged(nameof(Invoer));
-                UpdateHint();
-                UpdateLetterImage();
+                UpdateHintAndImage();
             }
         }
 
@@ -181,59 +168,16 @@ namespace BasisJaar2.ViewModels
             set { _resultaatVisible = value; OnPropertyChanged(nameof(ResultaatVisible)); }
         }
 
-        private string _resultaatTekst;
+        private string _resultaatTekst = "";
         public string ResultaatTekst
         {
             get => _resultaatTekst;
             set { _resultaatTekst = value; OnPropertyChanged(nameof(ResultaatTekst)); }
         }
 
-        private FormattedString _formattedInvoer;
-        public FormattedString FormattedInvoer
-        {
-            get => _formattedInvoer;
-            set { _formattedInvoer = value; OnPropertyChanged(nameof(FormattedInvoer)); }
-        }
-
-        // NIEUW: bepaalt welke afbeelding moet tonen (a.png..z.png + space.png)
-        private void UpdateLetterImage()
-        {
-            if (!PracticeModeHints || string.IsNullOrEmpty(VoorbeeldTekst))
-            {
-                CurrentLetterImage = null;
-                return;
-            }
-
-            int index = Invoer?.Length ?? 0;
-
-            if (index >= VoorbeeldTekst.Length)
-            {
-                CurrentLetterImage = null;
-                return;
-            }
-
-            char next = char.ToLower(VoorbeeldTekst[index]);
-
-            // letters a-z
-            if (next >= 'a' && next <= 'z')
-            {
-                CurrentLetterImage = $"{next}.png";
-                return;
-            }
-
-            // spatie
-            if (next == ' ')
-            {
-                CurrentLetterImage = "spatie.png";
-                return;
-            }
-
-            CurrentLetterImage = null;
-        }
-
         public void VoegKarakterToe(char c)
         {
-            if (_firstErrorIndex != -1) return;
+            if (_firstErrorIndex != -1) return;               // stop bij eerste fout (jouw keuze)
             if (Invoer.Length >= VoorbeeldTekst.Length) return;
 
             if (c != VoorbeeldTekst[Invoer.Length])
@@ -245,8 +189,9 @@ namespace BasisJaar2.ViewModels
 
             Invoer += c;
             AantalKarakters = Invoer.Length;
+
             UpdateFormattedInvoer();
-            UpdateLetterImage();
+            UpdateHintAndImage();
 
             if (Invoer.Length == VoorbeeldTekst.Length && _firstErrorIndex == -1)
                 StopOefening();
@@ -261,7 +206,7 @@ namespace BasisJaar2.ViewModels
                 _firstErrorIndex = -1;
 
             UpdateFormattedInvoer();
-            UpdateLetterImage();
+            UpdateHintAndImage();
         }
 
         private void UpdateFormattedInvoer()
@@ -302,18 +247,53 @@ namespace BasisJaar2.ViewModels
             FormattedInvoer = invoerFs;
         }
 
-        private void UpdateHint()
+        private void UpdateHintAndImage()
         {
-            if (!PracticeModeHints || Invoer.Length >= VoorbeeldTekst.Length)
+            if (string.IsNullOrEmpty(VoorbeeldTekst))
             {
-                HuidigeHint = string.Empty;
+                HuidigeHint = "";
+                CurrentLetterImage = null;
                 return;
             }
 
-            char volgende = VoorbeeldTekst[Invoer.Length];
-            HuidigeHint = _vingerHints.ContainsKey(volgende)
-                ? _vingerHints[volgende]
+            int index = Invoer?.Length ?? 0;
+            if (index >= VoorbeeldTekst.Length)
+            {
+                HuidigeHint = "";
+                CurrentLetterImage = null;
+                return;
+            }
+
+            char volgende = VoorbeeldTekst[index];
+
+            // hint tekst
+            HuidigeHint = _vingerHints.TryGetValue(volgende, out var hint)
+                ? hint
                 : "Gebruik de juiste vinger voor deze toets";
+
+            // afbeelding: a.png..z.png + spatie.png
+            char nextLower = char.ToLower(volgende);
+
+            if (nextLower >= 'a' && nextLower <= 'z')
+            {
+                CurrentLetterImage = $"{nextLower}.png";
+                return;
+            }
+
+            if (volgende == ' ')
+            {
+                CurrentLetterImage = "spatie.png";
+                return;
+            }
+
+            if (volgende == ';')
+            {
+                // pas aan naar jouw bestandsnaam
+                CurrentLetterImage = "puntkomma.png";
+                return;
+            }
+
+            CurrentLetterImage = null;
         }
 
         public void Start()
@@ -325,15 +305,18 @@ namespace BasisJaar2.ViewModels
             _stopwatch.Start();
             _timerLoopt = true;
 
-            Invoer = string.Empty;
+            Invoer = "";
             _firstErrorIndex = -1;
+            _fouten.Clear();
+            TotaalFouten = 0;
+
             UpdateFormattedInvoer();
 
             StartEnabled = false;
             StopEnabled = true;
             ResultaatVisible = false;
 
-            UpdateLetterImage();
+            UpdateHintAndImage();
             StartTimerUpdate();
         }
 
@@ -343,8 +326,11 @@ namespace BasisJaar2.ViewModels
         {
             _stopwatch.Reset();
             Tijd = "00:00";
-            Invoer = string.Empty;
+            Invoer = "";
             _firstErrorIndex = -1;
+            _fouten.Clear();
+            TotaalFouten = 0;
+
             UpdateFormattedInvoer();
 
             StartEnabled = true;
@@ -353,21 +339,7 @@ namespace BasisJaar2.ViewModels
             _timerLoopt = false;
             Started = false;
 
-            _fouten.Clear();
-            TotaalFouten = 0;
-
-            UpdateLetterImage();
-        }
-
-        public void Terug()
-        {
-            Invoer = string.Empty;
-            _firstErrorIndex = -1;
-            UpdateFormattedInvoer();
-            Started = false;
-
-            if (MainPageViewModel.Current != null)
-                MainPageViewModel.Current.SubpageContent = new Views.LevelSelectie(1);
+            UpdateHintAndImage();
         }
 
         private void StopOefening()
@@ -376,6 +348,7 @@ namespace BasisJaar2.ViewModels
 
             _stopwatch.Stop();
             _timerLoopt = false;
+
             StartEnabled = true;
             StopEnabled = false;
 
@@ -389,14 +362,21 @@ namespace BasisJaar2.ViewModels
             var tijdInMinuten = tijd.TotalMinutes;
             var wpm = tijdInMinuten > 0 ? Math.Round(aantalWoorden / tijdInMinuten, 2) : 0;
 
-            string foutTekst = _fouten.Count > 0 ? $"Fouten ({_fouten.Count}): {string.Join(", ", _fouten)}" : "Geen fouten";
+            int totalTyped = Invoer?.Length ?? 0;
+            int foutenAantal = _fouten.Count;
+
+            double accuracy = totalTyped > 0
+                ? ((totalTyped - foutenAantal) / (double)totalTyped) * 100.0
+                : 0.0;
 
             ResultaatTekst =
-                $"Tijd: {tijd:mm\\:ss}\nKarakters: {AantalKarakters}\nWoorden: {aantalWoorden}\nWPM: {wpm}\n{foutTekst}";
+                $"Tijd: {tijd:mm\\:ss}\nKarakters: {AantalKarakters}\nWoorden: {aantalWoorden}\nWPM: {wpm}\nAccuracy: {Math.Round(accuracy, 2)}%\nFouten: {foutenAantal}";
 
-            bool foutenOk = _fouten.Count <= (AantalKarakters / 100.0) * 10;
+            bool volledigGetypt = totalTyped == VoorbeeldTekst.Length;
+            bool accuracyOk = accuracy >= 90.0;
             bool wpmOk = wpm >= 20;
-            bool levelGehaald = foutenOk && wpmOk;
+
+            bool levelGehaald = volledigGetypt && accuracyOk && wpmOk;
 
             if (levelGehaald)
             {
@@ -405,10 +385,16 @@ namespace BasisJaar2.ViewModels
             }
             else
             {
-                ResultaatTekst += "\nLevel NIET gehaald.";
+                if (!volledigGetypt) ResultaatTekst += "\nNiet gehaald: tekst niet afgemaakt.";
+                else if (!accuracyOk) ResultaatTekst += "\nNiet gehaald: accuracy minimaal 90%.";
+                else if (!wpmOk) ResultaatTekst += "\nNiet gehaald: te weinig WPM.";
+                else ResultaatTekst += "\nLevel NIET gehaald.";
             }
 
             ResultaatVisible = true;
+
+            // hints uit aan het einde
+            HuidigeHint = "";
             CurrentLetterImage = null;
         }
 

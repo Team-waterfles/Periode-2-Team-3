@@ -67,14 +67,21 @@ namespace BasisJaar2
                 new Standaardlevel {Moeilijkheidsgraad = 3, Naam = "Volledige zinnen", Tekst = "Dit is een uitgebreide typoefening voor gevorderde gebruikers. Typen is een belangrijke vaardigheid in de moderne wereld. Of je nu student bent, professional of hobbyist, goede typvaardigheden maken je werk een stuk efficiënter. Door regelmatig te oefenen met verschillende soorten teksten, verbeter je niet alleen je snelheid maar ook je nauwkeurigheid. Muziek en ritme kunnen helpen om je typritme te verbeteren en het oefenen aangenamer te maken." }];
             await SeedStandaardlevelAsync(sp.GetRequiredService<IStandaardlevelRepository>(), standaardlevels);
 
-            Oefenlevel[] oefenlevels = [
-                new Oefenlevel {Id = 0, Naam = "2 vingers", Letteropties = " fj" },
-                new Oefenlevel {Id = 1, Naam = "4 vingers", Letteropties = " fjdke" },
-                new Oefenlevel {Id = 2, Naam = "6 vingers", Letteropties = " fjdkewslo" },
-                new Oefenlevel {Id = 3, Naam = "8 vingers", Letteropties = " ;fjdkewsloa" },
-                new Oefenlevel {Id = 4, Naam = "letters bovenste rij", Letteropties = " qwertyuiop" },
-                new Oefenlevel {Id = 5, Naam = "10 vingers", Letteropties = " ;qwertyuiopasdfghjklzxcvbnm" }];
+            Oefenlevel[] oefenlevels =[
+             new Oefenlevel { Id = 0, Naam = "2 vingers", Letteropties = " fj" },
+             new Oefenlevel { Id = 1, Naam = "4 vingers", Letteropties = " fjdk" },
+             new Oefenlevel { Id = 2, Naam = "6 vingers", Letteropties = " fjdkwslo" },
+             new Oefenlevel { Id = 3, Naam = "8 vingers", Letteropties = " asdfjkl;" },
+             new Oefenlevel { Id = 4, Naam = "bovenste rij", Letteropties = " qwertyuiop" },
+             new Oefenlevel { Id = 5, Naam = "onderste rij", Letteropties = " zxcvbnm" },
+             new Oefenlevel { Id = 6, Naam = "letters (alles)", Letteropties = " qwertyuiopasdfghjklzxcvbnm" },
+             new Oefenlevel { Id = 7, Naam = "letters + ;", Letteropties = " ;qwertyuiopasdfghjklzxcvbnm" },
+             new Oefenlevel { Id = 8, Naam = "woorden (mix)", Letteropties = " qwertyuiopasdfghjklzxcvbnm" },
+             new Oefenlevel { Id = 9, Naam = "moeilijke mix", Letteropties = " ;qwertyuiopasdfghjklzxcvbnm" },
+];
+
             await SeedOefenlevelAsync(sp.GetRequiredService<IOefenlevelRepository>(), oefenlevels);
+
         }
         private static async Task SeedStandaardlevelAsync(IStandaardlevelRepository levelrepository, Standaardlevel[] levels)
         {
