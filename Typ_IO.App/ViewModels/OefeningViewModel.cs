@@ -1,11 +1,12 @@
-﻿using System;
+﻿using BasisJaar2.Models;
+using BasisJaar2.Views;
+using Microsoft.Maui.Controls;
+using Microsoft.Maui.Dispatching;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using Microsoft.Maui.Dispatching;
-using Microsoft.Maui.Controls;
-using BasisJaar2.Models;
-using BasisJaar2.Views;
+using System.Windows.Input;
 
 namespace BasisJaar2.ViewModels
 {
@@ -15,8 +16,14 @@ namespace BasisJaar2.ViewModels
         private readonly Stopwatch _stopwatch;
         private bool _timerLoopt;
         private int _firstErrorIndex = -1;
+        private bool _showSuggestieLevelKnop;
+        public bool ShowSuggestieLevelKnop
+        {
+            get => _showSuggestieLevelKnop;
+            set { _showSuggestieLevelKnop = value; OnPropertyChanged(nameof(ShowSuggestieLevelKnop)); }
+        }
 
-    private List<char> _fouten = new List<char>();
+        private List<char> _fouten = new List<char>();
         public IReadOnlyList<char> Fouten => _fouten.AsReadOnly();
 
         private int _totaalFouten;
@@ -70,6 +77,8 @@ namespace BasisJaar2.ViewModels
         { ' ', "Spatiebalk (duim)" }
     };
 
+        public ICommand StartSuggestieLevelCommand { get; }
+
         public OefeningViewModel(IDispatcher dispatcher, string voorbeeldTekst, string levelKey)
         {
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
@@ -88,6 +97,8 @@ namespace BasisJaar2.ViewModels
             Started = false;
 
             UpdateHint(); // eerste hint tonen
+
+            StartSuggestieLevelCommand = new Command(StartSuggestieLevel);
         }
 
         public bool Started { get; private set; }
