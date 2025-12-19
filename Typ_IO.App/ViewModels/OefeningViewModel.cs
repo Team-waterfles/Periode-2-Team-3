@@ -1,34 +1,37 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using Microsoft.Maui.Dispatching;
+using System.Linq;
 using Microsoft.Maui.Controls;
+using Microsoft.Maui.Dispatching;
 using BasisJaar2.Models;
 using Typ_IO.Core.Models;
+using Typ_IO.Core.Services;
 
 namespace BasisJaar2.ViewModels
 {
     public class OefeningViewModel : INotifyPropertyChanged
     {
         private readonly IDispatcher _dispatcher;
-        private readonly Stopwatch _stopwatch;
+        private readonly Stopwatch _stopwatch = new();
+        private LeaderboardService _leaderboardService;
 
-        private bool _timerLoopt;
-        private int _firstErrorIndex = -1;
+        private const int MaxKaraktersPerRegel = 40;
+        private const int MinKaraktersLaatsteRegel = 15;
 
-        private readonly List<char> _fouten = new();
-        public IReadOnlyList<char> Fouten => _fouten.AsReadOnly();
-
-        private int _totaalFouten;
-        public int TotaalFouten
-        {
-            get => _totaalFouten;
-            set { _totaalFouten = value; OnPropertyChanged(nameof(TotaalFouten)); }
-        }
+        private readonly List<string> _regels = new();
+        private int _huidigeRegelIndex;
 
         public string VoorbeeldTekst { get; }
+        public int SpelerId { get; }
         public int LevelId { get; }
+        public bool IsOefening { get; }
+        public bool PracticeModeHints { get; set; } = false;
+
+        private readonly List<(int Index, char Getypt, char Verwacht)> _fouten = new();
+        private int _firstErrorIndex = -1;
+        private bool _timerLoopt;
 
         private string _huidigeHint = "";
         public string HuidigeHint
@@ -50,20 +53,6 @@ namespace BasisJaar2.ViewModels
         }
 
         public bool HasCurrentLetterImage => !string.IsNullOrEmpty(CurrentLetterImage);
-
-        private FormattedString _formattedVoorbeeldTekst;
-        public FormattedString FormattedVoorbeeldTekst
-        {
-            get => _formattedVoorbeeldTekst;
-            set { _formattedVoorbeeldTekst = value; OnPropertyChanged(nameof(FormattedVoorbeeldTekst)); }
-        }
-
-        private FormattedString _formattedInvoer;
-        public FormattedString FormattedInvoer
-        {
-            get => _formattedInvoer;
-            set { _formattedInvoer = value; OnPropertyChanged(nameof(FormattedInvoer)); }
-        }
 
         private readonly Dictionary<char, string> _vingerHints = new()
         {
@@ -97,103 +86,200 @@ namespace BasisJaar2.ViewModels
             { ' ', "Spatiebalk (duim)" }
         };
 
-        public OefeningViewModel(IDispatcher dispatcher, Level level)
+        #region Constructor
+        public OefeningViewModel(IDispatcher dispatcher, Level level, bool is_oefening)
         {
+            _leaderboardService = new LeaderboardService();
+
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
             VoorbeeldTekst = level?.Tekst ?? "";
+            SpelerId = 1;
             LevelId = level?.Id ?? 1;
+            IsOefening = is_oefening;
 
-            _stopwatch = new Stopwatch();
             Invoer = string.Empty;
 
             Tijd = "00:00";
-            AantalKarakters = 0;
             StartEnabled = true;
             StopEnabled = false;
             ResultaatVisible = false;
             Started = false;
 
-            UpdateFormattedInvoer();
+            BereidRegelsVoor();
+            UpdateFormattedRegels();
             UpdateHintAndImage();
         }
+        #endregion
 
-        public bool Started { get; private set; }
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged(string naam) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(naam));
-
-        private string _invoer = "";
+        #region Bindings
+        private string _invoer = string.Empty;
         public string Invoer
         {
             get => _invoer;
-            set
+            private set
             {
                 _invoer = value ?? "";
                 OnPropertyChanged(nameof(Invoer));
+                UpdateFormattedRegels();
                 UpdateHintAndImage();
             }
         }
 
-        private int _aantalKarakters;
-        public int AantalKarakters
+        private FormattedString _formattedVoorbeeldTekst;
+        public FormattedString FormattedVoorbeeldTekst
         {
-            get => _aantalKarakters;
-            set { _aantalKarakters = value; OnPropertyChanged(nameof(AantalKarakters)); }
+            get => _formattedVoorbeeldTekst;
+            private set { _formattedVoorbeeldTekst = value; OnPropertyChanged(nameof(FormattedVoorbeeldTekst)); }
         }
 
-        private string _tijd;
+        private FormattedString _formattedInvoer;
+        public FormattedString FormattedInvoer
+        {
+            get => _formattedInvoer;
+            private set { _formattedInvoer = value; OnPropertyChanged(nameof(FormattedInvoer)); }
+        }
+
+        private string _tijd = "00:00";
         public string Tijd
         {
             get => _tijd;
-            set { _tijd = value; OnPropertyChanged(nameof(Tijd)); }
+            private set { _tijd = value; OnPropertyChanged(nameof(Tijd)); }
         }
 
-        private bool _startEnabled;
+        private bool _startEnabled = true;
         public bool StartEnabled
         {
             get => _startEnabled;
-            set { _startEnabled = value; OnPropertyChanged(nameof(StartEnabled)); }
+            private set { _startEnabled = value; OnPropertyChanged(nameof(StartEnabled)); }
         }
 
         private bool _stopEnabled;
         public bool StopEnabled
         {
             get => _stopEnabled;
-            set { _stopEnabled = value; OnPropertyChanged(nameof(StopEnabled)); }
+            private set { _stopEnabled = value; OnPropertyChanged(nameof(StopEnabled)); }
         }
 
         private bool _resultaatVisible;
         public bool ResultaatVisible
         {
             get => _resultaatVisible;
-            set { _resultaatVisible = value; OnPropertyChanged(nameof(ResultaatVisible)); }
+            private set { _resultaatVisible = value; OnPropertyChanged(nameof(ResultaatVisible)); }
         }
 
         private string _resultaatTekst = "";
         public string ResultaatTekst
         {
             get => _resultaatTekst;
-            set { _resultaatTekst = value; OnPropertyChanged(nameof(ResultaatTekst)); }
+            private set { _resultaatTekst = value; OnPropertyChanged(nameof(ResultaatTekst)); }
         }
 
+        public bool Started { get; private set; }
+        #endregion
+
+        #region Regels voorbereiden
+        private void BereidRegelsVoor()
+        {
+            _regels.Clear();
+            int index = 0;
+
+            while (index < VoorbeeldTekst.Length)
+            {
+                int resterend = VoorbeeldTekst.Length - index;
+
+                if (resterend <= MinKaraktersLaatsteRegel && _regels.Count > 0)
+                {
+                    _regels[^1] += VoorbeeldTekst.Substring(index);
+                    break;
+                }
+
+                int maxEinde = Math.Min(index + MaxKaraktersPerRegel, VoorbeeldTekst.Length);
+                int split = maxEinde;
+
+                while (split > index && VoorbeeldTekst[split - 1] != ' ')
+                    split--;
+
+                if (split == index)
+                    split = maxEinde;
+
+                _regels.Add(VoorbeeldTekst.Substring(index, split - index));
+                index = split;
+            }
+
+            _huidigeRegelIndex = 0;
+        }
+
+        private int StartIndexVanRegel(int regel)
+        {
+            int idx = 0;
+            for (int i = 0; i < regel; i++)
+                idx += _regels[i].Length;
+            return idx;
+        }
+        #endregion
+
+        #region Rendering
+        private void UpdateFormattedRegels()
+        {
+            var voorbeeld = new FormattedString();
+            var invoer = new FormattedString();
+
+            int eerste = Math.Max(0, _huidigeRegelIndex - 1);
+            int laatste = Math.Min(_regels.Count - 1, _huidigeRegelIndex + 1);
+
+            for (int r = eerste; r <= laatste; r++)
+            {
+                string regel = _regels[r];
+                int start = StartIndexVanRegel(r);
+
+                for (int i = 0; i < regel.Length; i++)
+                {
+                    int index = start + i;
+                    Color kleur = index < Invoer.Length
+                        ? index == _firstErrorIndex ? Colors.Red : Colors.Gray
+                        : Colors.Black;
+
+                    voorbeeld.Spans.Add(new Span { Text = regel[i].ToString(), TextColor = kleur });
+
+                    if (r == _huidigeRegelIndex && index < Invoer.Length)
+                    {
+                        char c = Invoer[index];
+                        invoer.Spans.Add(new Span
+                        {
+                            Text = c == ' ' ? "_" : c.ToString(),
+                            TextColor = index == _firstErrorIndex ? Colors.Red : Colors.Black
+                        });
+                    }
+                }
+
+                voorbeeld.Spans.Add(new Span { Text = "\n" });
+                if (r == _huidigeRegelIndex)
+                    invoer.Spans.Add(new Span { Text = "\n" });
+            }
+
+            FormattedVoorbeeldTekst = voorbeeld;
+            FormattedInvoer = invoer;
+        }
+        #endregion
+
+        #region Typen
         public void VoegKarakterToe(char c)
         {
-            if (_firstErrorIndex != -1) return;               // stop bij eerste fout (jouw keuze)
+            if (_firstErrorIndex != -1) return;
             if (Invoer.Length >= VoorbeeldTekst.Length) return;
 
             if (c != VoorbeeldTekst[Invoer.Length])
             {
                 _firstErrorIndex = Invoer.Length;
-                _fouten.Add(c);
-                TotaalFouten = _fouten.Count;
+                _fouten.Add((Invoer.Length, c, VoorbeeldTekst[Invoer.Length]));
             }
 
             Invoer += c;
-            AantalKarakters = Invoer.Length;
 
-            UpdateFormattedInvoer();
-            UpdateHintAndImage();
+            if (Invoer.Length > StartIndexVanRegel(_huidigeRegelIndex) + _regels[_huidigeRegelIndex].Length)
+                _huidigeRegelIndex = Math.Min(_huidigeRegelIndex + 1, _regels.Count - 1);
 
-            if (Invoer.Length == VoorbeeldTekst.Length && _firstErrorIndex == -1)
+            if (Invoer.Length == VoorbeeldTekst.Length)
                 StopOefening();
         }
 
@@ -201,52 +287,140 @@ namespace BasisJaar2.ViewModels
         {
             if (Invoer.Length == 0) return;
 
-            Invoer = Invoer.Substring(0, Invoer.Length - 1);
+            Invoer = Invoer[..^1];
             if (_firstErrorIndex >= Invoer.Length)
                 _firstErrorIndex = -1;
+        }
+        #endregion
 
-            UpdateFormattedInvoer();
+        #region Controls
+        public void Start()
+        {
+            if (Started) return;
+
+            Started = true;
+            StartEnabled = false;
+            StopEnabled = true;
+            ResultaatVisible = false;
+
+            _timerLoopt = true;
+            _stopwatch.Restart();
+
+            _dispatcher.StartTimer(TimeSpan.FromMilliseconds(100), () =>
+            {
+                if (!_timerLoopt) return false;
+                Tijd = _stopwatch.Elapsed.ToString(@"mm\:ss");
+                return true;
+            });
+        }
+
+        public void Stop() => StopOefening();
+
+        public void Opnieuw()
+        {
+            _stopwatch.Reset();
+            Tijd = "00:00";
+            Invoer = string.Empty;
+
+            _fouten.Clear();
+            _firstErrorIndex = -1;
+            _huidigeRegelIndex = 0;
+
+            Started = false;
+            _timerLoopt = false;
+            StartEnabled = true;
+            StopEnabled = false;
+            ResultaatVisible = false;
+
             UpdateHintAndImage();
         }
 
-        private void UpdateFormattedInvoer()
+        private void StopOefening()
         {
-            var invoerFs = new FormattedString();
-            var voorbeeldFs = new FormattedString();
+            if (!_timerLoopt) return;
 
-            for (int i = 0; i < VoorbeeldTekst.Length; i++)
+            _timerLoopt = false;
+            _stopwatch.Stop();
+
+            StartEnabled = true;
+            StopEnabled = false;
+            ToonResultaat();
+        }
+        #endregion
+
+        #region Resultaat
+        private void ToonResultaat()
+        {
+            var tijd = _stopwatch.Elapsed;
+            var woorden = Invoer.Split(' ', StringSplitOptions.RemoveEmptyEntries).Length;
+            var wpm = tijd.TotalMinutes > 0 ? Math.Round(woorden / tijd.TotalMinutes, 2) : 0;
+
+            int totalTyped = Invoer?.Length ?? 0;
+            int foutenAantal = _fouten.Count;
+
+            double accuracy = totalTyped > 0
+                ? ((totalTyped - foutenAantal) / (double)totalTyped) * 100.0
+                : 0.0;
+
+            string foutenTekst =
+                _fouten.Count == 0
+                    ? "Geen fouten"
+                    : $"Fouten ({_fouten.Count}): {string.Join(", ", _fouten.Select(f => f.Verwacht))}";
+
+            ResultaatTekst =
+                $"Tijd: {tijd:mm\\:ss}\n" +
+                $"Karakters: {totalTyped}\n" +
+                $"Woorden: {woorden}\n" +
+                $"WPM: {wpm}\n" +
+                $"Accuracy: {Math.Round(accuracy, 2)}%\n\n" +
+                foutenTekst;
+
+            // Meest gemaakte fout + vingerhint
+            var meestGemaakteFout = _fouten
+                .GroupBy(f => f.Verwacht)
+                .OrderByDescending(g => g.Count())
+                .FirstOrDefault();
+
+            if (meestGemaakteFout != null)
             {
-                var voorbeeldSpan = new Span
-                {
-                    Text = VoorbeeldTekst[i].ToString(),
-                    TextColor = Colors.Black
-                };
+                char foutChar = meestGemaakteFout.Key;
 
-                if (i < Invoer.Length)
+                if (_vingerHints.TryGetValue(foutChar, out string hint))
                 {
-                    if (_firstErrorIndex == i)
-                        voorbeeldSpan.TextColor = Colors.Red;
-                    else
-                        voorbeeldSpan.TextColor = Colors.Gray;
-                }
-
-                voorbeeldFs.Spans.Add(voorbeeldSpan);
-
-                if (i < Invoer.Length)
-                {
-                    var invoerSpan = new Span
-                    {
-                        Text = Invoer[i] == ' ' ? "_" : Invoer[i].ToString(),
-                        TextColor = (i == _firstErrorIndex) ? Colors.Red : Colors.Black
-                    };
-                    invoerFs.Spans.Add(invoerSpan);
+                    ResultaatTekst += $"\n\nTip: gebruik {hint}";
                 }
             }
 
-            FormattedVoorbeeldTekst = voorbeeldFs;
-            FormattedInvoer = invoerFs;
-        }
+            bool volledigGetypt = totalTyped == VoorbeeldTekst.Length;
+            bool accuracyOk = accuracy >= 90.0;
+            bool wpmOk = wpm >= 20;
 
+            bool levelGehaald = volledigGetypt && accuracyOk && wpmOk;
+
+            if (levelGehaald)
+            {
+                PracticeSession.MarkLevelGehaald(LevelId);
+                if (!IsOefening)
+                    _leaderboardService.plaats_score(LevelId, SpelerId, 900);
+
+                ResultaatTekst += "\n\nLevel gehaald!";
+            }
+            else
+            {
+                if (!volledigGetypt) ResultaatTekst += "\n\nNiet gehaald: tekst niet afgemaakt.";
+                else if (!accuracyOk) ResultaatTekst += "\n\nNiet gehaald: accuracy minimaal 90%.";
+                else if (!wpmOk) ResultaatTekst += "\n\nNiet gehaald: te weinig WPM.";
+            }
+
+            ResultaatVisible = true;
+
+            // Hints uit aan het einde
+            HuidigeHint = "";
+            CurrentLetterImage = null;
+        }
+        #endregion
+
+        #region Hints
         private void UpdateHintAndImage()
         {
             if (string.IsNullOrEmpty(VoorbeeldTekst))
@@ -266,12 +440,19 @@ namespace BasisJaar2.ViewModels
 
             char volgende = VoorbeeldTekst[index];
 
-            // hint tekst
-            HuidigeHint = _vingerHints.TryGetValue(volgende, out var hint)
-                ? hint
-                : "Gebruik de juiste vinger voor deze toets";
+            // Hint tekst (alleen in practice mode)
+            if (PracticeModeHints)
+            {
+                HuidigeHint = _vingerHints.TryGetValue(volgende, out var hint)
+                    ? hint
+                    : "Gebruik de juiste vinger voor deze toets";
+            }
+            else
+            {
+                HuidigeHint = "";
+            }
 
-            // afbeelding: a.png..z.png + spatie.png
+            // Afbeelding: a.png..z.png + spatie.png
             char nextLower = char.ToLower(volgende);
 
             if (nextLower >= 'a' && nextLower <= 'z')
@@ -288,131 +469,16 @@ namespace BasisJaar2.ViewModels
 
             if (volgende == ';')
             {
-                // pas aan naar jouw bestandsnaam
                 CurrentLetterImage = "puntkomma.png";
                 return;
             }
 
             CurrentLetterImage = null;
         }
+        #endregion
 
-        public void Start()
-        {
-            if (Started) return;
-            Started = true;
-
-            _stopwatch.Reset();
-            _stopwatch.Start();
-            _timerLoopt = true;
-
-            Invoer = "";
-            _firstErrorIndex = -1;
-            _fouten.Clear();
-            TotaalFouten = 0;
-
-            UpdateFormattedInvoer();
-
-            StartEnabled = false;
-            StopEnabled = true;
-            ResultaatVisible = false;
-
-            UpdateHintAndImage();
-            StartTimerUpdate();
-        }
-
-        public void Stop() => StopOefening();
-
-        public void Opnieuw()
-        {
-            _stopwatch.Reset();
-            Tijd = "00:00";
-            Invoer = "";
-            _firstErrorIndex = -1;
-            _fouten.Clear();
-            TotaalFouten = 0;
-
-            UpdateFormattedInvoer();
-
-            StartEnabled = true;
-            StopEnabled = false;
-            ResultaatVisible = false;
-            _timerLoopt = false;
-            Started = false;
-
-            UpdateHintAndImage();
-        }
-
-        private void StopOefening()
-        {
-            if (!_timerLoopt) return;
-
-            _stopwatch.Stop();
-            _timerLoopt = false;
-
-            StartEnabled = true;
-            StopEnabled = false;
-
-            ToonResultaat();
-        }
-
-        private void ToonResultaat()
-        {
-            var tijd = _stopwatch.Elapsed;
-            var aantalWoorden = TelWoorden(Invoer);
-            var tijdInMinuten = tijd.TotalMinutes;
-            var wpm = tijdInMinuten > 0 ? Math.Round(aantalWoorden / tijdInMinuten, 2) : 0;
-
-            int totalTyped = Invoer?.Length ?? 0;
-            int foutenAantal = _fouten.Count;
-
-            double accuracy = totalTyped > 0
-                ? ((totalTyped - foutenAantal) / (double)totalTyped) * 100.0
-                : 0.0;
-
-            ResultaatTekst =
-                $"Tijd: {tijd:mm\\:ss}\nKarakters: {AantalKarakters}\nWoorden: {aantalWoorden}\nWPM: {wpm}\nAccuracy: {Math.Round(accuracy, 2)}%\nFouten: {foutenAantal}";
-
-            bool volledigGetypt = totalTyped == VoorbeeldTekst.Length;
-            bool accuracyOk = accuracy >= 90.0;
-            bool wpmOk = wpm >= 20;
-
-            bool levelGehaald = volledigGetypt && accuracyOk && wpmOk;
-
-            if (levelGehaald)
-            {
-                PracticeSession.MarkLevelGehaald(LevelId);
-                ResultaatTekst += "\nLevel gehaald!";
-            }
-            else
-            {
-                if (!volledigGetypt) ResultaatTekst += "\nNiet gehaald: tekst niet afgemaakt.";
-                else if (!accuracyOk) ResultaatTekst += "\nNiet gehaald: accuracy minimaal 90%.";
-                else if (!wpmOk) ResultaatTekst += "\nNiet gehaald: te weinig WPM.";
-                else ResultaatTekst += "\nLevel NIET gehaald.";
-            }
-
-            ResultaatVisible = true;
-
-            // hints uit aan het einde
-            HuidigeHint = "";
-            CurrentLetterImage = null;
-        }
-
-        private int TelWoorden(string tekst)
-            => string.IsNullOrWhiteSpace(tekst) ? 0 :
-               tekst.Split(new[] { ' ', '\n', '\r', '\t' }, StringSplitOptions.RemoveEmptyEntries).Length;
-
-        private void StartTimerUpdate()
-        {
-            _dispatcher.StartTimer(TimeSpan.FromMilliseconds(100), () =>
-            {
-                if (_timerLoopt)
-                {
-                    Tijd = _stopwatch.Elapsed.ToString(@"mm\:ss");
-                    return true;
-                }
-                return false;
-            });
-        }
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged(string naam) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(naam));
     }
 }

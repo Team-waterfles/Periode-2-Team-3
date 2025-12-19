@@ -1,4 +1,4 @@
-﻿using Microsoft.Maui.Controls;
+using Microsoft.Maui.Controls;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using BasisJaar2.Models;
@@ -112,13 +112,13 @@ public class LevelsViewModel : BindableObject
 
             // ✅ PLAY (geen practice hints)
             MainPageViewModel.Current.SubpageContent =
-                new Oefening(PracticeSession.GeselecteerdLevel, currentPage, practiceModeHints: false);
+                new Oefening(PracticeSession.GeselecteerdLevel, true, currentPage);
         }
     }
 
     private static string GetBeschrijving(int progressId, string letteropties)
     {
-        // korte “letters:” string voor UI
+        // korte "letters:" string voor UI
         string letters = string.IsNullOrWhiteSpace(letteropties)
             ? ""
             : letteropties.Trim();

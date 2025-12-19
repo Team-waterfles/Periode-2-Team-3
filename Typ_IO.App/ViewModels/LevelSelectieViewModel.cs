@@ -12,6 +12,7 @@ namespace BasisJaar2.ViewModels
     {
         public ObservableCollection<Standaardlevel> Levels { get; } = new();
         public ICommand StartLevelCommand { get; }
+        public ICommand OpenLeaderboardCommand { get; }
 
         private readonly int _difficulty;
         private readonly IStandaardlevelRepository _levelrepository;
@@ -21,6 +22,7 @@ namespace BasisJaar2.ViewModels
             _levelrepository = Application.Current.Windows[0].Page.Handler.MauiContext.Services.GetService<IStandaardlevelRepository>();
             LoadLevels();
             StartLevelCommand = new Command<Standaardlevel>(OnStartLevel);
+            OpenLeaderboardCommand = new Command<Standaardlevel>(OpenLeaderboard);
         }
 
         private async void LoadLevels()
@@ -38,15 +40,24 @@ namespace BasisJaar2.ViewModels
             if (level == null) return;
 
             // Sla het geselecteerde level op
-            PracticeSession.GeselecteerdLevel = new Level {Id = 0, Naam = level.Naam, Beschrijving = "Geen beschrijving", Tekst = level.Tekst };
+            PracticeSession.GeselecteerdLevel = new Level {Id = level.Id, Naam = level.Naam, Beschrijving = "Geen beschrijving", Tekst = level.Tekst };
 
             // Navigeer naar oefening
             if (MainPageViewModel.Current != null)
             {
                 var currentPage = MainPageViewModel.Current.SubpageContent;
                 MainPageViewModel.Current.SubpageContent =
-                    new Oefening(PracticeSession.GeselecteerdLevel, currentPage);
+                    new Oefening(PracticeSession.GeselecteerdLevel, false, currentPage);
             }
+        }
+        private void OpenLeaderboard(Standaardlevel level)
+        {
+            if (level == null) return;
+
+            var currentPage = MainPageViewModel.Current.SubpageContent;
+            MainPageViewModel.Current.SubpageContent =
+                new LevelLeaderboard(level);
+
         }
     }
 }
