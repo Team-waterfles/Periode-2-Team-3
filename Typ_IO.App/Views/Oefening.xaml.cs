@@ -40,15 +40,18 @@ namespace BasisJaar2.Views
 
             if (!string.IsNullOrEmpty(voorbeeldTekstFromSuggested))
             {
-                // suggested level: gebruik de meegegeven tekst
+                // suggested level: gebruik de meegegeven tekst (foutletters)
                 voorbeeldTekst = voorbeeldTekstFromSuggested;
+            }
+            else if (Voorbeelden.ContainsKey(key))
+            {
+                // normaal level: gebruik de dictionary
+                voorbeeldTekst = Voorbeelden[key];
             }
             else
             {
-                // normaal level: kies voorbeeldtekst
-                voorbeeldTekst = Voorbeelden.ContainsKey(key)
-                    ? Voorbeelden[key]
-                    : Voorbeelden["Easy"];
+                // fallback
+                voorbeeldTekst = Voorbeelden["Easy"];
             }
 
             var vm = new OefeningViewModel(this.Dispatcher, voorbeeldTekst, _levelKey);

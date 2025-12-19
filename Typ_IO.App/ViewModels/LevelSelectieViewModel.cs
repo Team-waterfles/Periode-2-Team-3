@@ -54,7 +54,7 @@ namespace BasisJaar2.ViewModels
             {
                 var currentPage = MainPageViewModel.Current.SubpageContent;
                 MainPageViewModel.Current.SubpageContent =
-                    new Oefening(level.Nummer.ToString(), "play", currentPage);
+                    new Oefening(level.Nummer.ToString(), null, currentPage);
             }
         }
     }
