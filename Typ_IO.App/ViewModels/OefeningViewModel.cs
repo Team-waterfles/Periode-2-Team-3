@@ -29,7 +29,6 @@ namespace BasisJaar2.ViewModels
         public int LevelId { get; }
         public bool IsOefening { get; }
 
-
         public bool PracticeModeHints { get; set; } = false;
 
         private string _huidigeHint;
@@ -98,9 +97,10 @@ namespace BasisJaar2.ViewModels
 
             BereidRegelsVoor();
             UpdateFormattedRegels();
-            UpdateHint(); // eerste hint tonen
+            UpdateHint();
         }
         #endregion
+
         #region Bindings
         private string _invoer = string.Empty;
         public string Invoer
@@ -163,6 +163,7 @@ namespace BasisJaar2.ViewModels
             get => _resultaatTekst;
             private set { _resultaatTekst = value; OnPropertyChanged(nameof(ResultaatTekst)); }
         }
+
         public bool Started { get; private set; }
         #endregion
 
@@ -342,7 +343,6 @@ namespace BasisJaar2.ViewModels
             var woorden = Invoer.Split(' ', StringSplitOptions.RemoveEmptyEntries).Length;
             var wpm = tijd.TotalMinutes > 0 ? Math.Round(woorden / tijd.TotalMinutes, 2) : 0;
 
-
             string foutenTekst =
                 _fouten.Count == 0
                     ? "Geen fouten"
@@ -354,6 +354,23 @@ namespace BasisJaar2.ViewModels
                 $"WPM: {wpm}\n\n" +
                 foutenTekst;
 
+            // ⭐ Meest gemaakte fout + vingerhint
+            var meestGemaakteFout = _fouten
+                .GroupBy(f => f.Verwacht)
+                .OrderByDescending(g => g.Count())
+                .FirstOrDefault();
+
+            if (meestGemaakteFout != null)
+            {
+                char foutChar = meestGemaakteFout.Key;
+
+                if (_vingerHints.TryGetValue(foutChar, out string hint))
+                {
+                    ResultaatTekst +=
+                        $"Tip: gebruik {hint}";
+                }
+            }
+
             bool foutenOk = _fouten.Count <= (AantalKarakters / 100.0) * 10;
             bool wpmOk = wpm >= 20;
             bool levelGehaald = foutenOk && wpmOk;
@@ -361,12 +378,14 @@ namespace BasisJaar2.ViewModels
             if (levelGehaald)
             {
                 PracticeSession.MarkLevelGehaald(LevelId);
-                if (!IsOefening) { _leaderboardService.plaats_score(LevelId, SpelerId, 900); }
-                ResultaatTekst += "\nLevel gehaald!";
+                if (!IsOefening)
+                    _leaderboardService.plaats_score(LevelId, SpelerId, 900);
+
+                ResultaatTekst += "\n\nLevel gehaald!";
             }
             else
             {
-                ResultaatTekst += "\nLevel NIET gehaald.";
+                ResultaatTekst += "\n\nLevel NIET gehaald.";
             }
 
             ResultaatVisible = true;
