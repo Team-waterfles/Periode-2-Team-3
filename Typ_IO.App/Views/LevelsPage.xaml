@@ -2,7 +2,7 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:BasisJaar2.ViewModels"
-             xmlns:models="clr-namespace:BasisJaar2.Models"
+             xmlns:models="clr-namespace:Typ_IO.Core.Models;assembly=Typ_IO.Core"
              x:Class="BasisJaar2.Views.LevelsPage"
              x:DataType="vm:LevelsViewModel">
 
@@ -40,7 +40,7 @@
                         Margin="0,10"
                         SelectionMode="None">
             <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="models:Level">
+                <DataTemplate x:DataType="models:Oefenlevel">
                     <Frame Margin="0,8"
                            Padding="12"
                            HasShadow="True"
@@ -51,9 +51,29 @@
                                    FontAttributes="Bold"
                                    FontSize="20"
                                    TextColor="White" />
-                            <Label Text="{Binding Beschrijving}"
-                                   FontSize="14"
-                                   TextColor="#dddddd" />
+                            <Label FontSize="13"
+                                   TextColor="#dddddd">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding Naam}" Value="2 vingers">
+                                        <Setter Property="Text" Value="Begin met de basis positie" />
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Label" Binding="{Binding Naam}" Value="4 vingers">
+                                        <Setter Property="Text" Value="Voeg wijsvingers en middelvingers toe" />
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Label" Binding="{Binding Naam}" Value="6 vingers">
+                                        <Setter Property="Text" Value="Nu ook de ringvingers" />
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Label" Binding="{Binding Naam}" Value="8 vingers">
+                                        <Setter Property="Text" Value="Alle vingers behalve duimen" />
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Label" Binding="{Binding Naam}" Value="letters bovenste rij">
+                                        <Setter Property="Text" Value="Oefen de bovenste rij toetsen" />
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Label" Binding="{Binding Naam}" Value="10 vingers">
+                                        <Setter Property="Text" Value="Alle letters van het toetsenbord" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
                             <Button Text="Start level"
                                     Margin="0,8,0,0"
                                     Padding="5"

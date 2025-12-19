@@ -12,7 +12,8 @@ namespace Typ_IO.Core.Data
         {
             using var conn = await _factory.CreateOpenConnectionAsync();
             using var cmd = conn.CreateCommand();
-            cmd.CommandText = "INSERT INTO Oefenlevel (Naam, Letteropties) VALUES ($naam, $letteropties); SELECT last_insert_rowid();";
+            cmd.CommandText = "INSERT INTO Oefenlevel (Id, Naam, Letteropties) VALUES ($id, $naam, $letteropties); SELECT last_insert_rowid();";
+            cmd.Parameters.AddWithValue("$id", level.Id);
             cmd.Parameters.AddWithValue("$naam", level.Naam);
             cmd.Parameters.AddWithValue("$letteropties", level.Letteropties);
             var writer = await cmd.ExecuteScalarAsync(ct);

@@ -18,7 +18,7 @@
               `Moeilijkheidsgraad` INT UNSIGNED NOT NULL
             );
             CREATE TABLE IF NOT EXISTS `Oefenlevel` (
-              `Id` INTEGER PRIMARY KEY AUTOINCREMENT,
+              `Id` INTEGER PRIMARY KEY,
               `Naam` VARCHAR(50) NOT NULL,
               `Letteropties` VARCHAR(2000) NOT NULL
             );
