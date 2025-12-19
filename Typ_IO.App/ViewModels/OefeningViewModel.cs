@@ -331,10 +331,11 @@ namespace BasisJaar2.ViewModels
         {
             if (_fouten.Count == 0) return; // geen fouten, geen suggestie
 
-            string foutenTekst = string.Join("", _fouten); // alle fout-letters achter elkaar
+            // alle foute letters na elkaar
+            string foutenTekst = string.Join("", _fouten);
 
             // Maak een pseudo-level met alleen de foutletters
-            string suggestedLevelNummer = "S" + LevelKey; // S = Suggested
+            string suggestedLevelNummer = "S" + LevelKey; // S betekent suggested oftewel suggested
             string suggestedLevelNaam = $"Oefen fouten level {LevelKey}";
 
             PracticeSession.GeselecteerdLevel = new Level
@@ -345,10 +346,18 @@ namespace BasisJaar2.ViewModels
 
             if (MainPageViewModel.Current != null)
             {
+                // bewaar huidige pagina
                 var currentPage = MainPageViewModel.Current.SubpageContent;
+
+                // maak nieuwe Oefening aan met juiste constructor parameters
                 MainPageViewModel.Current.SubpageContent =
-                    new Oefening(foutenTekst, suggestedLevelNummer, currentPage);
+                    new Oefening(suggestedLevelNummer, foutenTekst, currentPage);
             }
+
+            // wis de fouten voor eventuele volgende suggested level
+            _fouten.Clear();
+            TotaalFouten = 0;
+            ShowSuggestieLevelKnop = false;
         }
 
         private void StartTimerUpdate()
