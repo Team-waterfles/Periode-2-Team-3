@@ -325,6 +325,30 @@ namespace BasisJaar2.ViewModels
             => string.IsNullOrWhiteSpace(tekst) ? 0 :
                tekst.Split(new[] { ' ', '\n', '\r', '\t' }, StringSplitOptions.RemoveEmptyEntries).Length;
 
+        private void StartSuggestieLevel()
+        {
+            if (_fouten.Count == 0) return; // geen fouten, geen suggestie
+
+            string foutenTekst = string.Join("", _fouten); // alle fout-letters achter elkaar
+
+            // Maak een pseudo-level met alleen de foutletters
+            string suggestedLevelNummer = "S" + LevelKey; // S = Suggested
+            string suggestedLevelNaam = $"Oefen fouten level {LevelKey}";
+
+            PracticeSession.GeselecteerdLevel = new Level
+            {
+                Nummer = suggestedLevelNummer,
+                Naam = suggestedLevelNaam
+            };
+
+            if (MainPageViewModel.Current != null)
+            {
+                var currentPage = MainPageViewModel.Current.SubpageContent;
+                MainPageViewModel.Current.SubpageContent =
+                    new Oefening(foutenTekst, suggestedLevelNummer, currentPage);
+            }
+        }
+
         private void StartTimerUpdate()
         {
             _dispatcher.StartTimer(TimeSpan.FromMilliseconds(100), () =>
