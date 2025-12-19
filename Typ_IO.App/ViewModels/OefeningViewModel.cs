@@ -329,10 +329,25 @@ namespace BasisJaar2.ViewModels
 
         private void StartSuggestieLevel()
         {
-            if (_fouten.Count == 0) return; // geen fouten, geen suggestie
+            if (_fouten.Count == 0) return; // geen suggestielevel als je 0 fouten hebt
 
-            // alle foute letters na elkaar
-            string foutenTekst = string.Join("", _fouten);
+            // maak een tekst van ong 50 karakters met random spaties en je fouten om te oefenen
+            var willekeurig = new Random();
+            var langeTekst = new List<char>();
+            while (langeTekst.Count < 200)
+            {
+                char nextChar = _fouten[willekeurig.Next(_fouten.Count)];
+                langeTekst.Add(nextChar);
+
+                // Voeg af en toe een spatie toe tussen 1 en 5 karakters
+                if (langeTekst.Count % 5 == 0 && willekeurig.NextDouble() < 0.5)
+                    langeTekst.Add(' ');
+            }
+
+            // hussel de karakters nog een keer extra voor extra willekeurigheid
+            langeTekst = langeTekst.OrderBy(c => willekeurig.Next()).ToList();
+
+            string foutenTekst = new string(langeTekst.ToArray());
 
             // Maak een pseudo-level met alleen de foutletters
             string suggestedLevelNummer = "S" + LevelKey; // S betekent suggested oftewel suggested
