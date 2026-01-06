@@ -15,6 +15,8 @@ Michael van der Rhee
 
 Rayen Khelifi
 
+Sem Rusbach
+
 ## Werkwijze
 
 In deze repository wordt gitflow gebruikt.
